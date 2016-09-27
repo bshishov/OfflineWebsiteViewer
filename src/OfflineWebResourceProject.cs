@@ -9,6 +9,8 @@ namespace OfflineWebsiteViewer
 {
     public class OfflineWebResourceProject
     {
+        public static string Extenstion = ".owr";
+
         public string ProjectPath { get; set; }
 
         public string Name;

@@ -15,115 +15,124 @@
         <utility:ZeroCollapsedNonZeroVisible x:Key="hideListBox" />
         <utility:BooleanToVisibilityConverter x:Key="boolToVisibility" />
     </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Panel.ZIndex="2">
-            <Grid.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FFD8D8D8" Offset="0"/>
-                    <GradientStop Color="#FFA4A4A4" Offset="1"/>
-                </LinearGradientBrush>
-            </Grid.Background>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <!-- NAVIGATION CONTROLS -->
-            <StackPanel Orientation="Horizontal" Margin="6" >
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type Button}">
-                    </Style>
-                </StackPanel.Resources>
-                <Button Command="{Binding BackCommand, ElementName=WebBrowser}">
-                    <Button.Resources>
-                        <Style TargetType="{x:Type Border}">
-                            <Setter Property="CornerRadius" Value="5"/>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open" Command="{Binding OpenCommand}"/>
+                <MenuItem Header="_Open DevTools" Command="{Binding OpenDevTools}" CommandParameter="OpenDevTools"/>
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+        
+            <Grid Grid.Row="0" Panel.ZIndex="2">
+                <Grid.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFD8D8D8" Offset="0"/>
+                        <GradientStop Color="#FFA4A4A4" Offset="1"/>
+                    </LinearGradientBrush>
+                </Grid.Background>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <!-- NAVIGATION CONTROLS -->
+                <StackPanel Orientation="Horizontal" Margin="6" >
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Button}">
                         </Style>
-                    </Button.Resources>
-                    <fa:FontAwesome Icon="ArrowLeft" FontSize="14" Padding="3" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF4D4D4D" />
-                </Button>
-                <Button Command="{Binding ForwardCommand , ElementName=WebBrowser}">
-                    <Button.Resources>
-                        <Style TargetType="{x:Type Border}">
-                            <Setter Property="CornerRadius" Value="5"/>
-                        </Style>
-                    </Button.Resources>
-                    <fa:FontAwesome Icon="ArrowRight" FontSize="14" Padding="3" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF4D4D4D" />
-                </Button>
-                <Button Command="{Binding GoHomeCommand}">
-                    <Button.Resources>
-                        <Style TargetType="{x:Type Border}">
-                            <Setter Property="CornerRadius" Value="5"/>
-                        </Style>
-                    </Button.Resources>
-                    <fa:FontAwesome Icon="Home" FontSize="14" Padding="3" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF4D4D4D" />
-                </Button>
-            </StackPanel>
-            <!-- SEARCH CONTROLS -->
-            <Grid Margin="3,6,6,6" Grid.Column="1">
-                <Border CornerRadius="10" Background="White" BorderBrush="Black" Padding="4">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <!-- SEARCH ICON -->
-                        <fa:FontAwesome Grid.Column="0" Icon="Search" Margin="6"
-                                        FontSize="14" VerticalAlignment="Center" 
-                                        HorizontalAlignment="Center" Foreground="#FF4D4D4D" />
-                        <!-- SEARCH FIELD -->
-                        <TextBox Grid.Column="1" x:Name="SearchField" 
-                                 Text="{Binding SearchField, UpdateSourceTrigger=PropertyChanged}" 
-                                 BorderBrush="{x:Null}" VerticalContentAlignment="Center" BorderThickness="0">
-                        </TextBox>
-                    </Grid>
-                </Border>
-                <!-- SEARCH RESULTS -->
-                <Canvas Margin="10,35,10,-50" Panel.ZIndex="100" Height="Auto" x:Name="searchResultsCanvas" 
-                        Canvas.Visibility="{Binding ElementName=SearchField, Path=IsFocused, Converter={StaticResource boolToVisibility}}">
-
-                    <ListBox ItemsSource="{Binding SearchResults}" BorderBrush="{x:Null}" x:Name="searchResultsList" 
-                                Width="{Binding ActualWidth, ElementName=searchResultsCanvas}"
-                                HorizontalContentAlignment="Stretch" 
-                                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <!--ListBox.Visibility="{Binding ElementName=searchResultsList, Path=Items.Count, Converter={StaticResource hideListBox}}"-->
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding SearchResultsSelectionChangedCommand}" 
-                                                        CommandParameter="{Binding ElementName=searchResultsList, Path=SelectedItem}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <ListBox.Effect>
-                            <DropShadowEffect Opacity="0.3" BlurRadius="10"></DropShadowEffect>
-                        </ListBox.Effect>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    </StackPanel.Resources>
+                    <Button Command="{Binding BackCommand, ElementName=WebBrowser}">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="5"/>
                             </Style>
-                        </ListBox.ItemContainerStyle>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type search:HtmlFileRecord}">
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-                                    <TextBlock Text="{Binding Title}" FontWeight="Bold"></TextBlock>
-                                    <TextBlock Text="{Binding Path}"></TextBlock>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Canvas>
+                        </Button.Resources>
+                        <fa:FontAwesome Icon="ArrowLeft" FontSize="14" Padding="3" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF4D4D4D" />
+                    </Button>
+                    <Button Command="{Binding ForwardCommand , ElementName=WebBrowser}">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                        <fa:FontAwesome Icon="ArrowRight" FontSize="14" Padding="3" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF4D4D4D" />
+                    </Button>
+                    <Button Command="{Binding GoHomeCommand}">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                        <fa:FontAwesome Icon="Home" FontSize="14" Padding="3" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF4D4D4D" />
+                    </Button>
+                </StackPanel>
+                <!-- SEARCH CONTROLS -->
+                <Grid Margin="3,6,6,6" Grid.Column="1">
+                    <Border CornerRadius="10" Background="White" BorderBrush="Black" Padding="4">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <!-- SEARCH ICON -->
+                            <fa:FontAwesome Grid.Column="0" Icon="Search" Margin="6"
+                                            FontSize="14" VerticalAlignment="Center" 
+                                            HorizontalAlignment="Center" Foreground="#FF4D4D4D" />
+                            <!-- SEARCH FIELD -->
+                            <TextBox Grid.Column="1" x:Name="SearchField" 
+                                     Text="{Binding SearchField, UpdateSourceTrigger=PropertyChanged}" 
+                                     BorderBrush="{x:Null}" VerticalContentAlignment="Center" BorderThickness="0">
+                            </TextBox>
+                        </Grid>
+                    </Border>
+                    <!-- SEARCH RESULTS -->
+                    <Canvas Margin="10,35,10,-50" Panel.ZIndex="100" Height="Auto" x:Name="searchResultsCanvas" 
+                            Canvas.Visibility="{Binding ElementName=SearchField, Path=IsFocused, Converter={StaticResource boolToVisibility}}">
+
+                        <ListBox ItemsSource="{Binding SearchResults}" BorderBrush="{x:Null}" x:Name="searchResultsList" 
+                                    Width="{Binding ActualWidth, ElementName=searchResultsCanvas}"
+                                    HorizontalContentAlignment="Stretch" 
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <!--ListBox.Visibility="{Binding ElementName=searchResultsList, Path=Items.Count, Converter={StaticResource hideListBox}}"-->
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SearchResultsSelectionChangedCommand}" 
+                                                            CommandParameter="{Binding ElementName=searchResultsList, Path=SelectedItem}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <ListBox.Effect>
+                                <DropShadowEffect Opacity="0.3" BlurRadius="10"></DropShadowEffect>
+                            </ListBox.Effect>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type search:HtmlFileRecord}">
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="{Binding Title}" FontWeight="Bold"></TextBlock>
+                                        <TextBlock Text="{Binding Path}"></TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Canvas>
+                </Grid>
             </Grid>
+            <wpf:ChromiumWebBrowser Grid.Row="1" x:Name="WebBrowser" Address="{Binding Project.IndexFilePath}" />
+            <StatusBar Grid.Row="2">
+                <ProgressBar HorizontalAlignment="Right" IsIndeterminate="{Binding IsLoading, ElementName=WebBrowser}" Width="100" Height="16" 
+            Margin="3" />
+                <Separator />
+                <TextBlock Text="{Binding Status}"></TextBlock>
+            </StatusBar>
         </Grid>
-        <wpf:ChromiumWebBrowser Grid.Row="1" x:Name="WebBrowser" Address="{Binding Project.IndexFilePath}" />
-        <StatusBar Grid.Row="2">
-            <ProgressBar HorizontalAlignment="Right" IsIndeterminate="{Binding IsLoading, ElementName=WebBrowser}" Width="100" Height="16" 
-        Margin="3" />
-            <Separator />
-            <TextBlock Text="{Binding Status}"></TextBlock>
-        </StatusBar>
-    </Grid>
+    </DockPanel>
 </Window>

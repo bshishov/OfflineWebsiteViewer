@@ -55,7 +55,7 @@ namespace OfflineWebsiteViewer.Search
 
         public void RunReindexTask()
         {
-            Task.Run(() => ReIndex());
+            Task.Factory.StartNew(ReIndex);
         }
 
         private string GetRelativePath(string filespec, string folder)
@@ -86,7 +86,7 @@ namespace OfflineWebsiteViewer.Search
 
             _searchCts = new CancellationTokenSource();
 
-            _currentSearchTask = Task.Run(() =>
+            _currentSearchTask = Task.Factory.StartNew(() =>
             {
                 var results = _index.Search(query).ToList();
                 onComplete(results);

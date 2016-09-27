@@ -6,9 +6,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using CefSharp;
 using CefSharp.Wpf;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using OfflineWebsiteViewer.Annotations;
+using OfflineWebsiteViewer.Commands;
 using OfflineWebsiteViewer.Search;
 
 namespace OfflineWebsiteViewer
@@ -62,8 +65,10 @@ namespace OfflineWebsiteViewer
             }
         }
 
-        public SearchResultsSelectionChanged SearchResultsSelectionChangedCommand { get; private set; }
-        public GoHomeCommand GoHomeCommand { get; private set; }
+        public ICommand SearchResultsSelectionChangedCommand { get; private set; }
+        public ICommand GoHomeCommand { get; private set; }
+        public ICommand OpenDevTools { get; private set; }
+        public ICommand OpenCommand { get; private set; }
 
         private readonly ChromiumWebBrowser _browser;
         private HtmlFileSearch _search;
@@ -72,8 +77,23 @@ namespace OfflineWebsiteViewer
         {
             _browser = browser;
             _browser.DownloadHandler = new CustomDownloadHandler();
-            SearchResultsSelectionChangedCommand = new SearchResultsSelectionChanged(this);
-            GoHomeCommand = new GoHomeCommand(this);
+
+            OpenDevTools = new GenericCommand(() =>
+            {
+                _browser.ShowDevTools();
+            });
+
+            GoHomeCommand = new GenericCommand(NavigateTohome);
+            SearchResultsSelectionChangedCommand = new GenericCommand<HtmlFileRecord>(NavigateTo);
+            OpenCommand = new GenericCommand(() =>
+            {
+                var dialog = new OpenFileDialog();
+                dialog.Filter = $"Projects (*{OfflineWebResourceProject.Extenstion})|*{OfflineWebResourceProject.Extenstion}|All files (*.*)|*.*";
+                if (dialog.ShowDialog() == true)
+                {
+                    Open(dialog.FileName);
+                }
+            });
         }
 
         private void OnSearchFieldChanged(string query)
@@ -113,6 +133,7 @@ namespace OfflineWebsiteViewer
         {
             var project = JsonConvert.DeserializeObject<OfflineWebResourceProject>(File.ReadAllText(projectPath), 
                 new JsonSerializerSettings(){ });
+            project.ProjectPath = new FileInfo(projectPath).DirectoryName;
 
             Open(project);
         }
@@ -133,51 +154,4 @@ namespace OfflineWebsiteViewer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    class SearchResultsSelectionChanged : ICommand
-    {
-        private readonly MainWindowViewModel _vm;
-
-        public SearchResultsSelectionChanged(MainWindowViewModel vm)
-        {
-            _vm = vm;
-        }
-
-        public bool CanExecute(object parameter)
-        {
-            var record = parameter as HtmlFileRecord;
-            return !string.IsNullOrEmpty(record?.Path);
-        }
-
-        public void Execute(object parameter)
-        {
-            var record = parameter as HtmlFileRecord;
-            _vm.NavigateTo(record);
-        }
-
-        public event EventHandler CanExecuteChanged;
-    }
-
-    class GoHomeCommand : ICommand
-    {
-        private readonly MainWindowViewModel _vm;
-
-        public GoHomeCommand(MainWindowViewModel vm)
-        {
-            _vm = vm;
-        }
-
-        public bool CanExecute(object parameter)
-        {
-            return _vm?.Project != null;
-        }
-
-        public void Execute(object parameter)
-        {
-            _vm.NavigateTohome();
-        }
-
-        public event EventHandler CanExecuteChanged;
-    }
-
 }
