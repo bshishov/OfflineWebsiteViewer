@@ -117,6 +117,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CustomDownloadHandler.cs" />
+    <Compile Include="Commands\GenericCommand.cs" />
     <Compile Include="Search\HtmlFileMapper.cs" />
     <Compile Include="Search\HtmlFileRecord.cs" />
     <Compile Include="Search\HtmlFileSearch.cs" />
@@ -186,7 +187,7 @@
   <Import Project="packages\cef.redist.x86.3.2704.1432\build\cef.redist.x86.targets" Condition="Exists('packages\cef.redist.x86.3.2704.1432\build\cef.redist.x86.targets')" />
   <Import Project="packages\CefSharp.Common.51.0.0\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.51.0.0\build\CefSharp.Common.targets')" />
   <Import Project="packages\CefSharp.Wpf.51.0.0\build\CefSharp.Wpf.targets" Condition="Exists('packages\CefSharp.Wpf.51.0.0\build\CefSharp.Wpf.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
