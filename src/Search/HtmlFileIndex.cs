@@ -9,35 +9,34 @@ using System.Threading.Tasks;
 
 namespace OfflineWebsiteViewer.Search
 {
-    class HtmlFileSearch
+    public class HtmlFileIndex
     {
         public bool IsEmptyIndex => !_index.GetAllIndexRecords().Any();
         public int Count => _index.GetAllIndexRecords().Count();
 
-        private readonly OfflineWebResourceProject _project;
+        private readonly string _indexPath;
         private readonly LuceneIndex<HtmlFileRecord> _index;
         private readonly Regex _titleRegex;
         private CancellationTokenSource _searchCts;
         private Task _currentSearchTask;
 
-        public HtmlFileSearch(OfflineWebResourceProject project)
+        public HtmlFileIndex(string indexDirectory)
         {
-            _project = project;
+            _indexPath = indexDirectory;
             _titleRegex = new Regex(@"<title>(.*?)</title>", RegexOptions.Compiled);
-            _index = new LuceneIndex<HtmlFileRecord>(Path.Combine(_project.ProjectPath, "SearchIndex"), new HtmlFileMapper());
-            var all = _index.GetAllIndexRecords();
+            _index = new LuceneIndex<HtmlFileRecord>(indexDirectory, new HtmlFileMapper());
         }
 
-        private void ReIndex()
+        private void AddUpdateFilesToIndex(string directory, Action callback = null)
         {
-            var files = System.IO.Directory.EnumerateFiles(_project.ProjectPath, "*.*", SearchOption.AllDirectories)
+            var files = System.IO.Directory.EnumerateFiles(directory, "*.*", SearchOption.AllDirectories)
                     .Where(s => s.EndsWith(".html", StringComparison.OrdinalIgnoreCase) || s.EndsWith(".htm", StringComparison.OrdinalIgnoreCase));
 
             var records = new List<HtmlFileRecord>();
             foreach (var file in files)
             {
-                var relativePath = GetRelativePath(file, _project.ProjectPath);
-                var text = File.ReadAllText(Path.Combine(_project.ProjectPath, relativePath));
+                var relativePath = GetRelativePath(file, directory);
+                var text = File.ReadAllText(Path.Combine(directory, relativePath));
 
                 var result = _titleRegex.Match(text);
                 var title = result.Groups[1].Value;
@@ -51,11 +50,12 @@ namespace OfflineWebsiteViewer.Search
             }
 
             _index.AddUpdateLuceneIndex(records);
+            callback?.Invoke();
         }
 
-        public void RunReindexTask()
+        public void RunReindexTask(string directory, Action callback = null)
         {
-            Task.Factory.StartNew(ReIndex);
+            Task.Factory.StartNew(() => { AddUpdateFilesToIndex(directory, callback); });
         }
 
         private string GetRelativePath(string filespec, string folder)
@@ -78,6 +78,9 @@ namespace OfflineWebsiteViewer.Search
             if(onComplete == null)
                 return;
 
+            if(IsEmptyIndex)
+                return;
+
             // cancel previous search task 
             if (_currentSearchTask != null && !_currentSearchTask.IsCompleted)
             {
@@ -91,6 +94,11 @@ namespace OfflineWebsiteViewer.Search
                 var results = _index.Search(query).ToList();
                 onComplete(results);
             }, _searchCts.Token);
+        }
+
+        public void ClearIndex()
+        {
+            Directory.Delete(_indexPath, true);
         }
     }
 }

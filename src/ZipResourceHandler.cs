@@ -27,12 +27,15 @@ namespace OfflineWebsiteViewer
 
         bool IResourceHandler.ProcessRequest(IRequest request, ICallback callback)
         {
-            var fileName = request.Url.Substring("zip://".Length);
-            if (fileName.EndsWith("/"))
-                fileName = fileName.Substring(0, fileName.Length - 1);
-            //var uri = new Uri(request.Url);
-            //var fileName = uri.AbsolutePath;
-            
+            //var fileName = request.Url.Substring("zip://".Length);
+            //if (fileName.EndsWith("/"))
+              //  fileName = fileName.Substring(0, fileName.Length - 1);
+            var uri = new Uri(request.Url);
+            var fileName = uri.AbsolutePath;
+
+            if (fileName.StartsWith("/"))
+                fileName = fileName.Substring(1, fileName.Length - 1);
+
             var entry = _zipFile.GetEntry(fileName);
             if (entry != null)
             {

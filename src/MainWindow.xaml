@@ -18,8 +18,15 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open" Command="{Binding OpenCommand}"/>
-                <MenuItem Header="_Open DevTools" Command="{Binding OpenDevTools}" CommandParameter="OpenDevTools"/>
+                <MenuItem Header="_Open Archive" Command="{Binding OpenArchiveCommand}"/>
+                <MenuItem Header="_Open Folder" Command="{Binding OpenFolderCommand}"/>                
+            </MenuItem>
+            <MenuItem Header="_Index">
+                <MenuItem Header="_Create Index" Command="{Binding CreateIndexCommand}"/>
+                <MenuItem Header="_Clear Index" Command="{Binding ClearIndexCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="_Dev Tools" Command="{Binding OpenDevToolsCommand}"/>                
             </MenuItem>
         </Menu>
         <Grid>
@@ -126,7 +133,7 @@
                     </Canvas>
                 </Grid>
             </Grid>
-            <wpf:ChromiumWebBrowser Grid.Row="1" x:Name="WebBrowser" Address="{Binding Project.IndexFilePath}" />
+            <wpf:ChromiumWebBrowser Grid.Row="1" x:Name="WebBrowser" Address="{Binding Project.IndexUrl}" />
             <StatusBar Grid.Row="2">
                 <ProgressBar HorizontalAlignment="Right" IsIndeterminate="{Binding IsLoading, ElementName=WebBrowser}" Width="100" Height="16" 
             Margin="3" />

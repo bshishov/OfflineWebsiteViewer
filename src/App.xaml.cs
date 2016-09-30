@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using CefSharp;
 using Newtonsoft.Json;
+using OfflineWebsiteViewer.Project;
 
 namespace OfflineWebsiteViewer
 {
-    public partial class App : Application
+    partial class App : Application
     {
-        public OfflineWebResourceProject Project { get; private set; }
+        public IProject Project { get; set; }
         
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -32,12 +33,19 @@ namespace OfflineWebsiteViewer
             }
             else
             {
-                var filename = e.Args[0];
-                Project = JsonConvert.DeserializeObject<OfflineWebResourceProject>(File.ReadAllText(filename), new JsonSerializerSettings()
+                var projectPath= e.Args[0];
+                if (Directory.Exists(projectPath))
                 {
-                });
-
-                Project.ProjectPath = new FileInfo(filename).DirectoryName;
+                    Project = new FlatDirectoryProject(projectPath);
+                }
+                else
+                {
+                    var extension = Path.GetExtension(projectPath);
+                    if(extension != null && extension.Equals(ArchiveProject.Extension))
+                    {
+                        Project = new ArchiveProject(projectPath);
+                    }
+                }
             }
         }
     }

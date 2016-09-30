@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using CefSharp;
-using ICSharpCode.SharpZipLib.Zip;
+using OfflineWebsiteViewer.Project;
 
 namespace OfflineWebsiteViewer
 {
@@ -13,9 +8,10 @@ namespace OfflineWebsiteViewer
     {
         public IResourceHandler Create(IBrowser browser, IFrame frame, string schemeName, IRequest request)
         {
-            var project = (Application.Current as App)?.Project;
-            if (project != null)
-                return new ZipResourceHandler(new ZipFile(project.ArchiveFilePath));
+            var project = (Application.Current as App)?.Project as ArchiveProject;
+
+            if(project?.Archive != null)
+                return new ZipResourceHandler(project.Archive);
             return null;
         }
     }

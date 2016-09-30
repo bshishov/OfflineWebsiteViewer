@@ -11,8 +11,10 @@ using CefSharp.Wpf;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using OfflineWebsiteViewer.Annotations;
-using OfflineWebsiteViewer.Commands;
+using OfflineWebsiteViewer.Project;
 using OfflineWebsiteViewer.Search;
+using OfflineWebsiteViewer.Utility;
+using Ookii.Dialogs.Wpf;
 
 namespace OfflineWebsiteViewer
 {
@@ -26,7 +28,6 @@ namespace OfflineWebsiteViewer
             get { return _searchQuery; }
             set
             {
-                Console.WriteLine($"CHANGED to {value}");
                 _searchQuery = value;
                 OnSearchFieldChanged(_searchQuery);
             }
@@ -42,15 +43,18 @@ namespace OfflineWebsiteViewer
                 OnPropertyChanged(nameof(Status));
             }
         }
-
-        private OfflineWebResourceProject _project;
-        public OfflineWebResourceProject Project
+        
+        public IProject Project
         {
-            get { return _project; }
+            get { return (Application.Current as App)?.Project; }
             set
             {
-                _project = value;
-                OnPropertyChanged(nameof(Project));
+                var app = Application.Current as App;
+                if (app != null)
+                {
+                    app.Project = value;
+                    OnPropertyChanged(nameof(Project));
+                }
             }
         }
 
@@ -67,33 +71,69 @@ namespace OfflineWebsiteViewer
 
         public ICommand SearchResultsSelectionChangedCommand { get; private set; }
         public ICommand GoHomeCommand { get; private set; }
-        public ICommand OpenDevTools { get; private set; }
-        public ICommand OpenCommand { get; private set; }
+        public ICommand OpenDevToolsCommand { get; private set; }
+        public ICommand OpenArchiveCommand { get; private set; }
+        public ICommand OpenFolderCommand { get; private set; }
+        public GenericCommand CreateIndexCommand { get; private set; }
+        public GenericCommand ClearIndexCommand { get; private set; }
 
         private readonly ChromiumWebBrowser _browser;
-        private HtmlFileSearch _search;
 
         public MainWindowViewModel(ChromiumWebBrowser browser)
         {
             _browser = browser;
             _browser.DownloadHandler = new CustomDownloadHandler();
 
-            OpenDevTools = new GenericCommand(() =>
+            OpenDevToolsCommand = new GenericCommand(() =>
             {
                 _browser.ShowDevTools();
             });
 
             GoHomeCommand = new GenericCommand(NavigateTohome);
             SearchResultsSelectionChangedCommand = new GenericCommand<HtmlFileRecord>(NavigateTo);
-            OpenCommand = new GenericCommand(() =>
+            OpenArchiveCommand = new GenericCommand(() =>
             {
-                var dialog = new OpenFileDialog();
-                dialog.Filter = $"Projects (*{OfflineWebResourceProject.Extenstion})|*{OfflineWebResourceProject.Extenstion}|All files (*.*)|*.*";
+                var dialog = new OpenFileDialog
+                {
+                    Filter =
+                        $"Projects (*{ArchiveProject.Extension})|*{ArchiveProject.Extension}|All files (*.*)|*.*"
+                };
                 if (dialog.ShowDialog() == true)
                 {
-                    Open(dialog.FileName);
+                    OpenArchive(dialog.FileName);
                 }
             });
+            OpenFolderCommand = new GenericCommand(() =>
+            {
+                var dialog = new VistaFolderBrowserDialog();
+                if (dialog.ShowDialog() == true)
+                {
+                    OpenDirectory(dialog.SelectedPath);
+                }
+            });
+
+            CreateIndexCommand = new GenericCommand(
+                () =>
+                {
+                    Project.CreateIndex(() =>
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            CreateIndexCommand.RaiseCanExecuteChanged();
+                            ClearIndexCommand.RaiseCanExecuteChanged();
+                        });
+                    });
+                }, 
+                () => Project?.SearchIndex?.IsEmptyIndex ?? false);
+
+            ClearIndexCommand = new GenericCommand(
+                () =>
+                {
+                    Project.SearchIndex.ClearIndex();
+                    CreateIndexCommand.RaiseCanExecuteChanged();
+                    ClearIndexCommand.RaiseCanExecuteChanged();
+                }, 
+                () => !Project?.SearchIndex?.IsEmptyIndex ?? false);
         }
 
         private void OnSearchFieldChanged(string query)
@@ -104,48 +144,45 @@ namespace OfflineWebsiteViewer
                 return;
             }
 
-            _search.Search(query, (results) =>
+            Project.SearchIndex.Search(query, (results) =>
             {
                 Status = $"Found {results.Count()} results matching query {query}";
                 SearchResults = new ObservableCollection<HtmlFileRecord>(results);
             });
         }
 
-        public void Open(OfflineWebResourceProject project)
+        public void Open(IProject project)
         {
             Project = project;
-            Status = $"Project {Project.Name} loaded";
+            Status = $"Project {Project} loaded";
 
-            _search = new HtmlFileSearch(Project);
-
-            if (Project.IndexSearch && _search.IsEmptyIndex)
+            if (!Project.SearchIndex.IsEmptyIndex)
             {
-                Status = $"Indexing";
-                _search.RunReindexTask();
+                Status = $"Found {Project.SearchIndex.Count} pages in index";
             }
-            else
-            {
-                Status = $"Found {_search.Count} pages in index";
-            }
+            CreateIndexCommand.RaiseCanExecuteChanged();
+            ClearIndexCommand.RaiseCanExecuteChanged();
         }
 
-        public void Open(string projectPath)
+        public void OpenDirectory(string directoryPath)
         {
-            var project = JsonConvert.DeserializeObject<OfflineWebResourceProject>(File.ReadAllText(projectPath), 
-                new JsonSerializerSettings(){ });
-            project.ProjectPath = new FileInfo(projectPath).DirectoryName;
-
-            Open(project);
+            Open(new FlatDirectoryProject(directoryPath));
         }
+
+        public void OpenArchive(string archivePath)
+        {
+            Open(new ArchiveProject(archivePath));
+        }
+
 
         public void NavigateTo(HtmlFileRecord record)
         {
-            _browser.Address = Path.Combine(_project.ProjectPath, record.Path);
+            _browser.Address = Project.GetUrl(record.Path);
         }
 
         public void NavigateTohome()
         {
-            _browser.Address = _project.IndexFilePath;
+            _browser.Address = Project.GetUrl(Project.IndexFile);
         }
 
         [NotifyPropertyChangedInvocator]

@@ -25,7 +25,11 @@ namespace OfflineWebsiteViewer.Search
             get
             {
                 if (_directoryTemp == null)
-                    _directoryTemp = FSDirectory.Open(new DirectoryInfo(_luceneDir));
+                {
+                    var dir = new DirectoryInfo(_luceneDir);
+                    dir.Create();
+                    _directoryTemp = FSDirectory.Open(dir);
+                }
 
                 if (IndexWriter.IsLocked(_directoryTemp))
                     IndexWriter.Unlock(_directoryTemp);

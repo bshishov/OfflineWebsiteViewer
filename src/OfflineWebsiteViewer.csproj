@@ -95,6 +95,10 @@
       <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ookii.Dialogs.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0c15020868fd6249, processorArchitecture=MSIL">
+      <HintPath>packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -117,10 +121,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CustomDownloadHandler.cs" />
-    <Compile Include="Commands\GenericCommand.cs" />
+    <Compile Include="Project\ArchiveProject.cs" />
+    <Compile Include="Project\FlatDirectoryProject.cs" />
+    <Compile Include="Utility\GenericCommand.cs" />
+    <Compile Include="Project\IProject.cs" />
     <Compile Include="Search\HtmlFileMapper.cs" />
     <Compile Include="Search\HtmlFileRecord.cs" />
-    <Compile Include="Search\HtmlFileSearch.cs" />
+    <Compile Include="Search\HtmlFileIndex.cs" />
     <Compile Include="Search\ILuceneMapper.cs" />
     <Compile Include="Search\LuceneIndex.cs" />
     <Compile Include="Utility\BoolTovisibilityConverter.cs" />
@@ -135,7 +142,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LuceneService.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -143,7 +149,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindowViewModel.cs" />
-    <Compile Include="OfflineWebResourceProject.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
