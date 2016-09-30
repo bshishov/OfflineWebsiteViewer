@@ -19,6 +19,11 @@ namespace OfflineWebsiteViewer
         {
             var cefSettings = new CefSettings();
             cefSettings.SetOffScreenRenderingBestPerformanceArgs();
+            cefSettings.RegisterScheme(new CefCustomScheme()
+            {
+                SchemeName = "zip",
+                SchemeHandlerFactory = new ZipSchemeHandlerFactory()
+            });
             Cef.Initialize(cefSettings);
 
             if (e.Args.Length == 0)

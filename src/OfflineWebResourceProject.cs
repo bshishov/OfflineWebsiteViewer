@@ -17,9 +17,11 @@ namespace OfflineWebsiteViewer
         public string Description;
         public string IndexFile;
         public bool IndexSearch;
+        public string Archive;
 
 
         public string IndexFilePath => Path.Combine(ProjectPath, IndexFile);
+        public string ArchiveFilePath => Path.Combine(ProjectPath, Archive);
 
         public OfflineWebResourceProject()
         {
