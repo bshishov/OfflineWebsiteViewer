@@ -121,6 +121,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CustomDownloadHandler.cs" />
+    <Compile Include="Handlers\EmbededResourceHandler.cs" />
+    <Compile Include="Handlers\ResourceSchemeHandlerFactory.cs" />
     <Compile Include="Project\ArchiveProject.cs" />
     <Compile Include="Project\FlatDirectoryProject.cs" />
     <Compile Include="Utility\GenericCommand.cs" />
@@ -132,8 +134,8 @@
     <Compile Include="Search\LuceneIndex.cs" />
     <Compile Include="Utility\BoolTovisibilityConverter.cs" />
     <Compile Include="Utility\ZeroCollapsedNonZeroVisible.cs" />
-    <Compile Include="ZipResourceHandler.cs" />
-    <Compile Include="ZipSchemeHandlerFactory.cs" />
+    <Compile Include="Handlers\ZipResourceHandler.cs" />
+    <Compile Include="Handlers\ZipSchemeHandlerFactory.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -177,7 +179,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Web\welcome.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Web\style.css" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\cef.redist.x64.3.2704.1432\build\cef.redist.x64.targets" Condition="Exists('packages\cef.redist.x64.3.2704.1432\build\cef.redist.x64.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using CefSharp;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Cookie = CefSharp.Cookie;
 
-namespace OfflineWebsiteViewer
+namespace OfflineWebsiteViewer.Handlers
 {
     class ZipResourceHandler : IResourceHandler
     {

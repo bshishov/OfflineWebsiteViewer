@@ -2,10 +2,12 @@
 using CefSharp;
 using OfflineWebsiteViewer.Project;
 
-namespace OfflineWebsiteViewer
+namespace OfflineWebsiteViewer.Handlers
 {
     class ZipSchemeHandlerFactory : ISchemeHandlerFactory
     {
+        public static string SchemeName = "zip";
+
         public IResourceHandler Create(IBrowser browser, IFrame frame, string schemeName, IRequest request)
         {
             var project = (Application.Current as App)?.Project as ArchiveProject;

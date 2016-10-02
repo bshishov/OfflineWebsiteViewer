@@ -133,7 +133,7 @@
                     </Canvas>
                 </Grid>
             </Grid>
-            <wpf:ChromiumWebBrowser Grid.Row="1" x:Name="WebBrowser" Address="{Binding Project.IndexUrl}" />
+            <wpf:ChromiumWebBrowser Grid.Row="1" x:Name="WebBrowser" Address="resource://local/welcome.html" />
             <StatusBar Grid.Row="2">
                 <ProgressBar HorizontalAlignment="Right" IsIndeterminate="{Binding IsLoading, ElementName=WebBrowser}" Width="100" Height="16" 
             Margin="3" />

@@ -69,13 +69,13 @@ namespace OfflineWebsiteViewer
             }
         }
 
-        public ICommand SearchResultsSelectionChangedCommand { get; private set; }
-        public ICommand GoHomeCommand { get; private set; }
-        public ICommand OpenDevToolsCommand { get; private set; }
-        public ICommand OpenArchiveCommand { get; private set; }
-        public ICommand OpenFolderCommand { get; private set; }
-        public GenericCommand CreateIndexCommand { get; private set; }
-        public GenericCommand ClearIndexCommand { get; private set; }
+        public ICommand SearchResultsSelectionChangedCommand { get; }
+        public GenericCommand GoHomeCommand { get; }
+        public ICommand OpenDevToolsCommand { get; }
+        public ICommand OpenArchiveCommand { get; }
+        public ICommand OpenFolderCommand { get; }
+        public GenericCommand CreateIndexCommand { get; }
+        public GenericCommand ClearIndexCommand { get; }
 
         private readonly ChromiumWebBrowser _browser;
 
@@ -89,7 +89,7 @@ namespace OfflineWebsiteViewer
                 _browser.ShowDevTools();
             });
 
-            GoHomeCommand = new GenericCommand(NavigateTohome);
+            GoHomeCommand = new GenericCommand(NavigateTohome, () => Project != null);
             SearchResultsSelectionChangedCommand = new GenericCommand<HtmlFileRecord>(NavigateTo);
             OpenArchiveCommand = new GenericCommand(() =>
             {
@@ -160,8 +160,11 @@ namespace OfflineWebsiteViewer
             {
                 Status = $"Found {Project.SearchIndex.Count} pages in index";
             }
+
             CreateIndexCommand.RaiseCanExecuteChanged();
             ClearIndexCommand.RaiseCanExecuteChanged();
+            GoHomeCommand.RaiseCanExecuteChanged();
+            OnPropertyChanged(nameof(Project));
         }
 
         public void OpenDirectory(string directoryPath)
@@ -182,7 +185,7 @@ namespace OfflineWebsiteViewer
 
         public void NavigateTohome()
         {
-            _browser.Address = Project.GetUrl(Project.IndexFile);
+            _browser.Address = Project?.GetUrl(Project.IndexFile);
         }
 
         [NotifyPropertyChangedInvocator]

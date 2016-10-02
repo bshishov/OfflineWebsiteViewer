@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using CefSharp;
 using Newtonsoft.Json;
+using OfflineWebsiteViewer.Handlers;
 using OfflineWebsiteViewer.Project;
 
 namespace OfflineWebsiteViewer
@@ -19,12 +20,24 @@ namespace OfflineWebsiteViewer
         protected override void OnStartup(StartupEventArgs e)
         {
             var cefSettings = new CefSettings();
-            cefSettings.SetOffScreenRenderingBestPerformanceArgs();
+            //cefSettings.SetOffScreenRenderingBestPerformanceArgs();
+            cefSettings.CefCommandLineArgs.Add("disable-gpu", "1");
+            //cefSettings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
+            //cefSettings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
+
+
             cefSettings.RegisterScheme(new CefCustomScheme()
             {
-                SchemeName = "zip",
-                SchemeHandlerFactory = new ZipSchemeHandlerFactory()
+                SchemeName = ZipSchemeHandlerFactory.SchemeName,
+                SchemeHandlerFactory = new ZipSchemeHandlerFactory(),
             });
+
+            cefSettings.RegisterScheme(new CefCustomScheme()
+            {
+                SchemeName = ResourceSchemeHandlerFactory.SchemeName,
+                SchemeHandlerFactory = new ResourceSchemeHandlerFactory(),
+            });
+
             Cef.Initialize(cefSettings);
 
             if (e.Args.Length == 0)
