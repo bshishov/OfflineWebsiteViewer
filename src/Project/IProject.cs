@@ -5,7 +5,9 @@ namespace OfflineWebsiteViewer.Project
 {
     public interface IProject : IDisposable
     {
-        //string Path { get; }
+        string Name { get; }
+        string ProjectPath { get; }
+        bool IsArchive { get; }
         string IndexFile { get; }
         string IndexUrl { get; }
         HtmlFileIndex SearchIndex { get; }

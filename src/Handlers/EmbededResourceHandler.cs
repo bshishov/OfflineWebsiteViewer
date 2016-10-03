@@ -15,31 +15,23 @@ namespace OfflineWebsiteViewer.Handlers
 {
     class EmbededResourceHandler : IResourceHandler
     {
-        private string _prefix = "OfflineWebsiteViewer.Resources.Web";
         private string _mimeType;
         private Stream _stream;
+        private readonly Assembly _assembly;
+        private readonly string _resourceName;
 
-        static EmbededResourceHandler()
+        public EmbededResourceHandler(Assembly assembly, string resourceName)
         {
+            _assembly = assembly;
+            _resourceName = resourceName;
         }
 
         bool IResourceHandler.ProcessRequest(IRequest request, ICallback callback)
         {
-            // The 'host' portion is entirely ignored by this scheme handler.
-            var uri = new Uri(request.Url);
-            var fileName = uri.AbsolutePath;
-            fileName = fileName.Replace('/', '.');
-
-            //var uri = new Uri(request.Url);
-            //var fileName = uri.AbsolutePath;
-
-
-            var assembly = Assembly.GetExecutingAssembly();
-
-            _stream = assembly.GetManifestResourceStream(_prefix + fileName);
+            _stream = _assembly.GetManifestResourceStream(_resourceName);
             if (_stream != null)
             {
-                var fileExtension = Path.GetExtension(fileName);
+                var fileExtension = Path.GetExtension(_resourceName);
                 _mimeType = ResourceHandler.GetMimeType(fileExtension);
                 callback.Continue();
                 return true;

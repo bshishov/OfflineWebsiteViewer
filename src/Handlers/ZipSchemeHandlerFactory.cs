@@ -14,7 +14,7 @@ namespace OfflineWebsiteViewer.Handlers
 
             if(project?.Archive != null)
                 return new ZipResourceHandler(project.Archive);
-            return null;
+            return new ResourceHandler();
         }
     }
 }

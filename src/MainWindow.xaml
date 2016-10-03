@@ -9,24 +9,41 @@
         xmlns:search="clr-namespace:OfflineWebsiteViewer.Search"
         xmlns:utility="clr-namespace:OfflineWebsiteViewer.Utility"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:res="clr-namespace:OfflineWebsiteViewer.Properties"
+        xmlns:resources="clr-namespace:OfflineWebsiteViewer.Resources"
+        xmlns:project="clr-namespace:OfflineWebsiteViewer.Project"
         mc:Ignorable="d"
+        x:Name="MyMainWindow"
+        Icon="./Resources/Icon.png"
         Title="{Binding Path=Title, ElementName=WebBrowser}" Height="721" Width="969">
     <Window.Resources>
         <utility:ZeroCollapsedNonZeroVisible x:Key="hideListBox" />
         <utility:BooleanToVisibilityConverter x:Key="boolToVisibility" />
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenArchiveCommand}"/>
+        <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding OpenFolderCommand}"/>
+        <KeyBinding Gesture="F12" Command="{Binding OpenDevToolsCommand}"/>
+    </Window.InputBindings>
     <DockPanel>
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_File">
-                <MenuItem Header="_Open Archive" Command="{Binding OpenArchiveCommand}"/>
-                <MenuItem Header="_Open Folder" Command="{Binding OpenFolderCommand}"/>                
+        <Menu DockPanel.Dock="Top" x:Name="MainMenu">
+            <MenuItem Header="{x:Static resources:Language.MenuFile}">
+                <MenuItem Header="{x:Static resources:Language.OpenArchive}" Command="{Binding OpenArchiveCommand}" InputGestureText="Ctrl+O" />
+                <MenuItem Header="{x:Static resources:Language.OpenFolder}" Command="{Binding OpenFolderCommand}" InputGestureText="Ctrl+Shift+O" />
+                <MenuItem Header="{x:Static resources:Language.RecentOpened}" ItemsSource="{Binding Recent}">
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate DataType="{x:Type project:IProject}">
+                            <MenuItem Header="{Binding Name}" Command="{Binding ElementName=MyMainWindow,Path=DataContext.OpenCommand}" CommandParameter="{Binding ProjectPath}" />
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
+                </MenuItem>
             </MenuItem>
-            <MenuItem Header="_Index">
-                <MenuItem Header="_Create Index" Command="{Binding CreateIndexCommand}"/>
-                <MenuItem Header="_Clear Index" Command="{Binding ClearIndexCommand}"/>
+            <MenuItem Header="{x:Static resources:Language.MenuIndex}">
+                <MenuItem Header="{x:Static resources:Language.MenuCreateIndex}" Command="{Binding CreateIndexCommand}"/>
+                <MenuItem Header="{x:Static resources:Language.MenuClearIndex}" Command="{Binding ClearIndexCommand}"/>
             </MenuItem>
-            <MenuItem Header="_Tools">
-                <MenuItem Header="_Dev Tools" Command="{Binding OpenDevToolsCommand}"/>                
+            <MenuItem Header="{x:Static resources:Language.MenuTools}">
+                <MenuItem Header="{x:Static resources:Language.MenuToolsDevTools}" Command="{Binding OpenDevToolsCommand}" InputGestureText="F12"/>                
             </MenuItem>
         </Menu>
         <Grid>
@@ -133,7 +150,7 @@
                     </Canvas>
                 </Grid>
             </Grid>
-            <wpf:ChromiumWebBrowser Grid.Row="1" x:Name="WebBrowser" Address="resource://local/welcome.html" />
+            <wpf:ChromiumWebBrowser Grid.Row="1" x:Name="WebBrowser" />
             <StatusBar Grid.Row="2">
                 <ProgressBar HorizontalAlignment="Right" IsIndeterminate="{Binding IsLoading, ElementName=WebBrowser}" Width="100" Height="16" 
             Margin="3" />

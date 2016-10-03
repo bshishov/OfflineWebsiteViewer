@@ -16,14 +16,13 @@ namespace OfflineWebsiteViewer.Utility
 
         public bool CanExecute(object parameter)
         {
-            if (_action != null && parameter is T)
-            {
-                if (_canExecute != null)
-                    return _canExecute((T)parameter);
-                return true;
-            }
+            if (_action == null)
+                return false;
 
-            return false;
+            if (_canExecute != null && parameter is T)
+                return _canExecute((T) parameter);
+            
+            return true;
         }
 
         public void Execute(object parameter)

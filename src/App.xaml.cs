@@ -20,8 +20,12 @@ namespace OfflineWebsiteViewer
         protected override void OnStartup(StartupEventArgs e)
         {
             var cefSettings = new CefSettings();
-            //cefSettings.SetOffScreenRenderingBestPerformanceArgs();
+#if DEBUG
             cefSettings.CefCommandLineArgs.Add("disable-gpu", "1");
+#else
+            cefSettings.SetOffScreenRenderingBestPerformanceArgs();
+#endif
+
             //cefSettings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
             //cefSettings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
 
@@ -35,7 +39,7 @@ namespace OfflineWebsiteViewer
             cefSettings.RegisterScheme(new CefCustomScheme()
             {
                 SchemeName = ResourceSchemeHandlerFactory.SchemeName,
-                SchemeHandlerFactory = new ResourceSchemeHandlerFactory(),
+                SchemeHandlerFactory = new ResourceSchemeHandlerFactory("OfflineWebsiteViewer.Resources.Web"),
             });
 
             Cef.Initialize(cefSettings);

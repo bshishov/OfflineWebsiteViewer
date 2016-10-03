@@ -78,8 +78,11 @@ namespace OfflineWebsiteViewer.Search
             if(onComplete == null)
                 return;
 
-            if(IsEmptyIndex)
+            if (IsEmptyIndex)
+            {
+                onComplete(new List<HtmlFileRecord>());
                 return;
+            }
 
             // cancel previous search task 
             if (_currentSearchTask != null && !_currentSearchTask.IsCompleted)

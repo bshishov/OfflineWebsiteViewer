@@ -9,6 +9,9 @@ namespace OfflineWebsiteViewer.Project
     {
         public const string Extension = ".zip";
 
+        public string Name { get; }
+        public string ProjectPath { get; }
+        public bool IsArchive => true;
         public ZipFile Archive { get; }
         public string IndexFile { get; } = "index.html";
         public HtmlFileIndex SearchIndex { get; }
@@ -16,7 +19,9 @@ namespace OfflineWebsiteViewer.Project
 
         public ArchiveProject(string path)
         {
+            Name = new FileInfo(path).Name;
             Archive = new ZipFile(path);
+            ProjectPath = path;
 
             //var searchIndexEntry = Archive.GetEntry("SearchEntry");
             var searchIndexDirectory = Path.Combine(Path.GetTempPath(), "SearchIndex");
@@ -33,7 +38,6 @@ namespace OfflineWebsiteViewer.Project
 
         public void CreateIndex(Action callback)
         {
-            throw new InvalidOperationException("Can't create index for archive project");
         }
 
         public void Dispose()
