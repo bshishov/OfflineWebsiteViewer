@@ -10,7 +10,9 @@ using System.Windows.Input;
 using CefSharp;
 using CefSharp.Wpf;
 using Microsoft.Win32;
+using NLog;
 using OfflineWebsiteViewer.Annotations;
+using OfflineWebsiteViewer.Logging.Views;
 using OfflineWebsiteViewer.Project;
 using OfflineWebsiteViewer.Search;
 using OfflineWebsiteViewer.Utility;
@@ -20,6 +22,7 @@ namespace OfflineWebsiteViewer
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _searchQuery;
@@ -75,6 +78,8 @@ namespace OfflineWebsiteViewer
         public ICommand OpenArchiveCommand { get; }
         public ICommand OpenFolderCommand { get; }
         public ICommand OpenCommand { get; }
+        public ICommand ClearRecent { get; }
+        public ICommand OpenLog { get; }
         public GenericCommand CreateIndexCommand { get; }
         public GenericCommand ClearIndexCommand { get; }
         public List<IProject> Recent { get; }
@@ -85,26 +90,32 @@ namespace OfflineWebsiteViewer
 
         public MainWindowViewModel(ChromiumWebBrowser browser)
         {
+            Logger.Trace("Main window started");
             _browser = browser;
             _browser.DownloadHandler = new CustomDownloadHandler();
 
-            OpenDevToolsCommand = new GenericCommand(() =>
-            {
-                _browser.ShowDevTools();
-            });
+            OpenDevToolsCommand = new GenericCommand(() => { _browser.ShowDevTools(); });
+            OpenLog = new GenericCommand(() => { LoggingView.Instance.Show(); });
 
             GoHomeCommand = new GenericCommand(NavigateTohome, () => Project != null);
             SearchResultsSelectionChangedCommand = new GenericCommand<HtmlFileRecord>(NavigateTo);
+            ClearRecent = new GenericCommand(() =>
+            {
+                _persister.Clear();
+                OnPropertyChanged(nameof(Recent));
+            });
             OpenArchiveCommand = new GenericCommand(() =>
             {
+                var extFilter = String.Join("; ", ArchiveProject.Extensions.Select(e => "*" + e)); ;
                 var dialog = new OpenFileDialog
                 {
+                    
                     Filter =
-                        $"Projects (*{ArchiveProject.Extension})|*{ArchiveProject.Extension}|All files (*.*)|*.*"
+                        $"Projects ({extFilter})|{extFilter}|All files (*.*)|*.*"
                 };
                 if (dialog.ShowDialog() == true)
                 {
-                    OpenArchive(dialog.FileName);
+                    Open(dialog.FileName);
                 }
             });
             OpenFolderCommand = new GenericCommand(() =>
@@ -112,7 +123,7 @@ namespace OfflineWebsiteViewer
                 var dialog = new VistaFolderBrowserDialog();
                 if (dialog.ShowDialog() == true)
                 {
-                    OpenDirectory(dialog.SelectedPath);
+                    Open(dialog.SelectedPath);
                 }
             });
 
@@ -143,7 +154,9 @@ namespace OfflineWebsiteViewer
                 }, 
                 () => !Project?.SearchIndex?.IsEmptyIndex ?? false);
 
-            Recent = _persister.RecentProjects.Select(GetProject).ToList();
+            Recent = _persister.RecentProjects.Select(GetProject).Where(p => p != null).ToList();
+            Logger.Trace($"Loaded {Recent.Count} recent projects");
+
             TemplateRenderer.RegisterSafeTypeWithAllProperties(typeof(IProject));
             browser.LoadHtml(TemplateRenderer.RenderFromResource("welcome.html", new {
                 recent = Recent,
@@ -155,6 +168,9 @@ namespace OfflineWebsiteViewer
             _binding.Bind("open_folder", OpenFolderCommand);
             _binding.Bind("open_recent", new GenericCommand<int>(OpenRecent));
             browser.RegisterJsObject("app", _binding);
+
+            if(Project != null)
+                Open(Project);
         }
 
         private void OnSearchFieldChanged(string query)
@@ -177,36 +193,42 @@ namespace OfflineWebsiteViewer
 
         public void Open(IProject project)
         {
+            if (project == null)
+            {
+                return;
+            }
+
             Project = project;
             Status = String.Format(Resources.Language.StatusOpened, Project.Name);
+            Project.Open();
 
             if (!Project.SearchIndex.IsEmptyIndex)
             {
                 Status = String.Format(Resources.Language.StatusIndexCount, Project.SearchIndex.Count);
             }
-
+            
             CreateIndexCommand.RaiseCanExecuteChanged();
             ClearIndexCommand.RaiseCanExecuteChanged();
             GoHomeCommand.RaiseCanExecuteChanged();
             OnPropertyChanged(nameof(Project));
             NavigateTohome();
-        }
-
-        public void OpenDirectory(string directoryPath)
-        {
-            _persister.AddProject(directoryPath);
-            Open(new FlatDirectoryProject(directoryPath));
-        }
-
-        public void OpenArchive(string archivePath)
-        {
-            _persister.AddProject(archivePath);
-            Open(new ArchiveProject(archivePath));
+            _persister.AddProject(project.ProjectPath);
+            OnPropertyChanged(nameof(Recent));
         }
 
         public void Open(string fileOrFolder)
         {
-            Open(GetProject(fileOrFolder));
+            var project = GetProject(fileOrFolder);
+            if (project == null)
+            {
+                MessageBox.Show(String.Format(Resources.Language.ErrorCantOpenProject, fileOrFolder),
+                    Resources.Language.Error,
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                Open(project);
+            }
         }
 
         public void OpenRecent(int id)
@@ -235,13 +257,20 @@ namespace OfflineWebsiteViewer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private IProject GetProject(string fileOrFolder)
+        public static IProject GetProject(string fileOrFolder)
         {
             if (Directory.Exists(fileOrFolder))
                 return new FlatDirectoryProject(fileOrFolder);
-            else if (File.Exists(fileOrFolder))
-                return new ArchiveProject(fileOrFolder);
 
+            if (File.Exists(fileOrFolder))
+            {
+                var extension = Path.GetExtension(fileOrFolder);
+                if (extension != null && ArchiveProject.Extensions.Contains(extension))
+                {
+                    return new ArchiveProject(fileOrFolder);
+                }
+            }
+           
             return null;
         }
     }

@@ -11,7 +11,9 @@ namespace OfflineWebsiteViewer.Project
         string IndexFile { get; }
         string IndexUrl { get; }
         HtmlFileIndex SearchIndex { get; }
+        bool Open();
         string GetUrl(string file);
         void CreateIndex(Action callback);
+        void OpenFile(string file);
     }
 }

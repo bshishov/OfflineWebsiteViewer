@@ -10,22 +10,22 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using CefSharp;
-using Lucene.Net.Index;
+using OfflineWebsiteViewer.Logging.ViewModels;
 
-namespace OfflineWebsiteViewer
+namespace OfflineWebsiteViewer.Logging.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for LoggingView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class LoggingView : Window
     {
-        public MainWindow()
+        public static LoggingView Instance = new LoggingView();
+
+        public LoggingView()
         {
             InitializeComponent();
-            this.DataContext = new MainWindowViewModel(this.WebBrowser);
+            this.DataContext = new LoggingViewModel();
         }
     }
 }

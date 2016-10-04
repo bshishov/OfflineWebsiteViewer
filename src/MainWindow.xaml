@@ -43,7 +43,9 @@
                 <MenuItem Header="{x:Static resources:Language.MenuClearIndex}" Command="{Binding ClearIndexCommand}"/>
             </MenuItem>
             <MenuItem Header="{x:Static resources:Language.MenuTools}">
-                <MenuItem Header="{x:Static resources:Language.MenuToolsDevTools}" Command="{Binding OpenDevToolsCommand}" InputGestureText="F12"/>                
+                <MenuItem Header="{x:Static resources:Language.MenuToolsDevTools}" Command="{Binding OpenDevToolsCommand}" InputGestureText="F12"/>
+                <MenuItem Header="{x:Static resources:Language.MenuToolsClearRecent}" Command="{Binding ClearRecent}" />
+                <MenuItem Header="{x:Static resources:Language.MenuOpenLog}" Command="{Binding OpenLog}" />
             </MenuItem>
         </Menu>
         <Grid>
@@ -152,10 +154,15 @@
             </Grid>
             <wpf:ChromiumWebBrowser Grid.Row="1" x:Name="WebBrowser" />
             <StatusBar Grid.Row="2">
-                <ProgressBar HorizontalAlignment="Right" IsIndeterminate="{Binding IsLoading, ElementName=WebBrowser}" Width="100" Height="16" 
+                <StatusBarItem Content="{Binding ElementName=WebBrowser,Path=Address}"></StatusBarItem>
+                <StatusBarItem HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal">
+                        <Separator />
+                        <StatusBarItem Content="{Binding Status}"></StatusBarItem>
+                        <ProgressBar HorizontalAlignment="Right" IsIndeterminate="{Binding IsLoading, ElementName=WebBrowser}" Width="100" Height="16" 
             Margin="3" />
-                <Separator />
-                <TextBlock Text="{Binding Status}"></TextBlock>
+                    </StackPanel>
+                </StatusBarItem>
             </StatusBar>
         </Grid>
     </DockPanel>

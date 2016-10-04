@@ -61,6 +61,51 @@ namespace OfflineWebsiteViewer.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t open project &quot;{0}&quot;.
+        /// </summary>
+        public static string ErrorCantOpenProject {
+            get {
+                return ResourceManager.GetString("ErrorCantOpenProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear All.
+        /// </summary>
+        public static string LoggingClearAll {
+            get {
+                return ResourceManager.GetString("LoggingClearAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show output from:.
+        /// </summary>
+        public static string LoggingShowOutputFrom {
+            get {
+                return ResourceManager.GetString("LoggingShowOutputFrom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log.
+        /// </summary>
+        public static string LoggingTitle {
+            get {
+                return ResourceManager.GetString("LoggingTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear Index.
         /// </summary>
         public static string MenuClearIndex {
@@ -97,11 +142,29 @@ namespace OfflineWebsiteViewer.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open log.
+        /// </summary>
+        public static string MenuOpenLog {
+            get {
+                return ResourceManager.GetString("MenuOpenLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tools.
         /// </summary>
         public static string MenuTools {
             get {
                 return ResourceManager.GetString("MenuTools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear recent projects.
+        /// </summary>
+        public static string MenuToolsClearRecent {
+            get {
+                return ResourceManager.GetString("MenuToolsClearRecent", resourceCulture);
             }
         }
         
@@ -192,6 +255,15 @@ namespace OfflineWebsiteViewer.Resources {
         public static string StatusSearching {
             get {
                 return ResourceManager.GetString("StatusSearching", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string Warning {
+            get {
+                return ResourceManager.GetString("Warning", resourceCulture);
             }
         }
         
