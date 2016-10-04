@@ -20,6 +20,7 @@ namespace OfflineWebsiteViewer
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private IProject _project;
+
         public IProject Project
         {
             get { return _project; }
@@ -32,15 +33,39 @@ namespace OfflineWebsiteViewer
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            Logger.Trace($"App startup with {e.Args.Length} args");
+            string[] args;
+            try
+            {
+                args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
+                if (args == null)
+                    args = e.Args;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, $"Error loading ActivationAcrgumens, fallback to e.Args");
+                args = e.Args;
+            }
+
+            try
+            {
+                Start(args);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, $"Failed to start: {ex.Message}");
+            }
+            
+        }
+
+        private void Start(string[] args)
+        {
+            Logger.Trace($"App startup with {args.Length} args: {String.Join(",", args)}");
             Logger.Trace("Configuring CefSettings");
             var cefSettings = new CefSettings();
-#if DEBUG
-            cefSettings.CefCommandLineArgs.Add("disable-gpu", "1");
-#else
-            cefSettings.SetOffScreenRenderingBestPerformanceArgs();
-#endif
 
+            cefSettings.CefCommandLineArgs.Add("disable-gpu", "1");
+
+            //cefSettings.SetOffScreenRenderingBestPerformanceArgs();
             //cefSettings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
             //cefSettings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
 
@@ -61,10 +86,15 @@ namespace OfflineWebsiteViewer
             Cef.Initialize(cefSettings);
 
             // if project is passed to arguments, open it
-            if (e.Args.Length > 0)
+            if (args.Any())
             {
-                var projectPath = e.Args[0];
-                Logger.Trace($"Getting project from startup arg: '{e.Args[0]}'");
+                var projectPath = args.First();
+                Logger.Trace($"Startup project path: '{projectPath}'");
+
+                if (projectPath.StartsWith("file://"))
+                    projectPath = new Uri(projectPath).LocalPath;
+
+                Logger.Trace($"Getting startup project: '{projectPath}'");
                 Project = MainWindowViewModel.GetProject(projectPath);
                 if (Project != null)
                 {
@@ -75,8 +105,6 @@ namespace OfflineWebsiteViewer
                     Logger.Trace($"Passed project can't be resolved");
                 }
             }
-
-            //ConfigurationItemFactory.Default.Targets.RegisterDefinition("ShoutingTarget", typeof(Logging.ShoutingTarget));
         }
     }
 }

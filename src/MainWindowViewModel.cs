@@ -169,8 +169,8 @@ namespace OfflineWebsiteViewer
             _binding.Bind("open_recent", new GenericCommand<int>(OpenRecent));
             browser.RegisterJsObject("app", _binding);
 
-            if(Project != null)
-                Open(Project);
+            if (Project != null)
+                LoadProject();
         }
 
         private void OnSearchFieldChanged(string query)
@@ -194,11 +194,14 @@ namespace OfflineWebsiteViewer
         public void Open(IProject project)
         {
             if (project == null)
-            {
                 return;
-            }
 
             Project = project;
+            LoadProject();
+        }
+
+        private void LoadProject()
+        {
             Status = String.Format(Resources.Language.StatusOpened, Project.Name);
             Project.Open();
 
@@ -206,13 +209,13 @@ namespace OfflineWebsiteViewer
             {
                 Status = String.Format(Resources.Language.StatusIndexCount, Project.SearchIndex.Count);
             }
-            
+
             CreateIndexCommand.RaiseCanExecuteChanged();
             ClearIndexCommand.RaiseCanExecuteChanged();
             GoHomeCommand.RaiseCanExecuteChanged();
             OnPropertyChanged(nameof(Project));
             NavigateTohome();
-            _persister.AddProject(project.ProjectPath);
+            _persister.AddProject(Project.ProjectPath);
             OnPropertyChanged(nameof(Recent));
         }
 
@@ -257,17 +260,17 @@ namespace OfflineWebsiteViewer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public static IProject GetProject(string fileOrFolder)
+        public static IProject GetProject(string projectPath)
         {
-            if (Directory.Exists(fileOrFolder))
-                return new FlatDirectoryProject(fileOrFolder);
+            if (Directory.Exists(projectPath))
+                return new FlatDirectoryProject(projectPath);
 
-            if (File.Exists(fileOrFolder))
+            if (File.Exists(projectPath))
             {
-                var extension = Path.GetExtension(fileOrFolder);
+                var extension = Path.GetExtension(projectPath);
                 if (extension != null && ArchiveProject.Extensions.Contains(extension))
                 {
-                    return new ArchiveProject(fileOrFolder);
+                    return new ArchiveProject(projectPath);
                 }
             }
            
