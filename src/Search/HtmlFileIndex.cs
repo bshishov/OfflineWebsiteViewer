@@ -114,6 +114,21 @@ namespace OfflineWebsiteViewer.Search
             }, _searchCts.Token);
         }
 
+        public HtmlFileRecord Search(string query)
+        {
+            Logger.Info($"Searching '{query}' in index");
+            
+            if (IsEmptyIndex)
+            {
+                Logger.Info($"Index is empty");
+                return null;
+            }
+            
+            var results = _index.Search(query).ToList();
+            Logger.Info($"Found {results.Count} results for query '{query}'");
+            return results.First();
+        }
+
         public void ClearIndex()
         {
             Logger.Info($"Clearing index");

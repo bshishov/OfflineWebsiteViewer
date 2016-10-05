@@ -10,7 +10,7 @@ using CefSharp;
 using Newtonsoft.Json;
 using NLog;
 using NLog.Config;
-using OfflineWebsiteViewer.Handlers;
+using OfflineWebsiteViewer.Browser.Handlers;
 using OfflineWebsiteViewer.Project;
 
 namespace OfflineWebsiteViewer

@@ -2,7 +2,7 @@
 using CefSharp;
 using OfflineWebsiteViewer.Project;
 
-namespace OfflineWebsiteViewer.Handlers
+namespace OfflineWebsiteViewer.Browser.Handlers
 {
     class ZipSchemeHandlerFactory : ISchemeHandlerFactory
     {

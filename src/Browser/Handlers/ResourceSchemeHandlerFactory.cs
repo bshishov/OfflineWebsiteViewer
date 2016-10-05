@@ -2,7 +2,7 @@
 using System.Reflection;
 using CefSharp;
 
-namespace OfflineWebsiteViewer.Handlers
+namespace OfflineWebsiteViewer.Browser.Handlers
 {
     class ResourceSchemeHandlerFactory : ISchemeHandlerFactory
     {

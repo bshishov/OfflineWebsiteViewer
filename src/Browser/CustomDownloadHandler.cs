@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using CefSharp;
 using NLog;
 
-namespace OfflineWebsiteViewer
+namespace OfflineWebsiteViewer.Browser
 {
     public class CustomDownloadHandler : IDownloadHandler
     {

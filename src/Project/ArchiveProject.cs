@@ -76,8 +76,16 @@ namespace OfflineWebsiteViewer.Project
         {
             Logger.Trace($"Closing archive");
             Archive.Close();
-            Logger.Trace($"Deleting temp directory: {_tempDirectory}");
-            Directory.Delete(_tempDirectory, true);
+
+            try
+            {
+                Logger.Trace($"Deleting temp directory: {_tempDirectory}");
+                Directory.Delete(_tempDirectory, true);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, $"Failed to delete temp directory: {_tempDirectory}");
+            }
         }
     }
 }

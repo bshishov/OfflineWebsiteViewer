@@ -12,6 +12,7 @@ using CefSharp.Wpf;
 using Microsoft.Win32;
 using NLog;
 using OfflineWebsiteViewer.Annotations;
+using OfflineWebsiteViewer.Browser;
 using OfflineWebsiteViewer.Logging.Views;
 using OfflineWebsiteViewer.Project;
 using OfflineWebsiteViewer.Search;
@@ -93,6 +94,7 @@ namespace OfflineWebsiteViewer
             Logger.Trace("Main window started");
             _browser = browser;
             _browser.DownloadHandler = new CustomDownloadHandler();
+            _browser.LifeSpanHandler = new CustomLifespanHandler();
 
             OpenDevToolsCommand = new GenericCommand(() => { _browser.ShowDevTools(); });
             OpenLog = new GenericCommand(() => { LoggingView.Instance.Show(); });
@@ -167,6 +169,7 @@ namespace OfflineWebsiteViewer
             _binding.Bind("open_archive", OpenArchiveCommand);
             _binding.Bind("open_folder", OpenFolderCommand);
             _binding.Bind("open_recent", new GenericCommand<int>(OpenRecent));
+            _binding.Bind("search", (query) => Project.SearchIndex.Search(query as string));
             browser.RegisterJsObject("app", _binding);
 
             if (Project != null)

@@ -168,10 +168,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BrowserBinding.cs" />
-    <Compile Include="CustomDownloadHandler.cs" />
-    <Compile Include="Handlers\EmbededResourceHandler.cs" />
-    <Compile Include="Handlers\ResourceSchemeHandlerFactory.cs" />
+    <Compile Include="Browser\BrowserBinding.cs" />
+    <Compile Include="Browser\CustomDownloadHandler.cs" />
+    <Compile Include="Browser\CustomLifespanHandler.cs" />
+    <Compile Include="Browser\Handlers\EmbededResourceHandler.cs" />
+    <Compile Include="Browser\Handlers\ResourceSchemeHandlerFactory.cs" />
     <Compile Include="Logging\ShoutingTarget.cs" />
     <Compile Include="Logging\ViewModels\LoggingViewModel.cs" />
     <Compile Include="Logging\Views\LoggingView.xaml.cs">
@@ -201,8 +202,8 @@
     <Compile Include="Utility\BoolTovisibilityConverter.cs" />
     <Compile Include="Utility\LangTag.cs" />
     <Compile Include="Utility\ZeroCollapsedNonZeroVisible.cs" />
-    <Compile Include="Handlers\ZipResourceHandler.cs" />
-    <Compile Include="Handlers\ZipSchemeHandlerFactory.cs" />
+    <Compile Include="Browser\Handlers\ZipResourceHandler.cs" />
+    <Compile Include="Browser\Handlers\ZipSchemeHandlerFactory.cs" />
     <Page Include="Logging\Views\LoggingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -367,4 +368,5 @@
       <Visible>false</Visible>
     </Content>
   </ItemGroup>
+  <ItemGroup />
 </Project>

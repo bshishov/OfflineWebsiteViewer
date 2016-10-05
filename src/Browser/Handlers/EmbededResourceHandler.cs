@@ -1,47 +1,32 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using CefSharp;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
 using Cookie = CefSharp.Cookie;
 
-namespace OfflineWebsiteViewer.Handlers
+namespace OfflineWebsiteViewer.Browser.Handlers
 {
-    class ZipResourceHandler : IResourceHandler
+    class EmbededResourceHandler : IResourceHandler
     {
-        private Stream _stream;
         private string _mimeType;
+        private Stream _stream;
+        private readonly Assembly _assembly;
+        private readonly string _resourceName;
 
-        private readonly ZipFile _zipFile;
-
-        public ZipResourceHandler(ZipFile zipFile)
+        public EmbededResourceHandler(Assembly assembly, string resourceName)
         {
-            _zipFile = zipFile;
+            _assembly = assembly;
+            _resourceName = resourceName;
         }
 
         bool IResourceHandler.ProcessRequest(IRequest request, ICallback callback)
         {
-            var uri = new Uri(request.Url);
-            var fileName = uri.LocalPath;
-
-            if (fileName.StartsWith("/"))
-                fileName = fileName.Substring(1, fileName.Length - 1);
-
-            var entry = _zipFile.GetEntry(fileName);
-            if (entry != null)
+            _stream = _assembly.GetManifestResourceStream(_resourceName);
+            if (_stream != null)
             {
-                using (var inputStream = _zipFile.GetInputStream(entry))
-                {
-                    var buffer = new byte[4096];
-                    var memoryStream = new MemoryStream();
-                    StreamUtils.Copy(inputStream, memoryStream, buffer);
-                    memoryStream.Seek(0, SeekOrigin.Begin);
-                    _stream?.Dispose();
-                    _stream = memoryStream;
-                }
-                
-                _mimeType = ResourceHandler.GetMimeType(Path.GetExtension(fileName));
+                var fileExtension = Path.GetExtension(_resourceName);
+                _mimeType = ResourceHandler.GetMimeType(fileExtension);
                 callback.Continue();
                 return true;
             }
@@ -49,6 +34,7 @@ namespace OfflineWebsiteViewer.Handlers
             callback.Dispose();
             return false;
         }
+
 
         void IResourceHandler.GetResponseHeaders(IResponse response, out long responseLength, out string redirectUrl)
         {
@@ -80,15 +66,24 @@ namespace OfflineWebsiteViewer.Handlers
             return bytesRead > 0;
         }
 
-        bool IResourceHandler.CanGetCookie(Cookie cookie) => true;
+        bool IResourceHandler.CanGetCookie(Cookie cookie)
+        {
+            return true;
+        }
 
-        bool IResourceHandler.CanSetCookie(Cookie cookie) => true;
+        bool IResourceHandler.CanSetCookie(Cookie cookie)
+        {
+            return true;
+        }
 
         void IResourceHandler.Cancel()
         {
+
         }
+
         void IDisposable.Dispose()
         {
+
         }
     }
 }
