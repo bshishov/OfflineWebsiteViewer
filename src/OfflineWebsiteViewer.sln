@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfflineWebsiteViewer", "OfflineWebsiteViewer/OfflineWebsiteViewer.csproj", "{8DC240E0-15A7-417F-AA46-161F58387C26}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfflineWebsiteViewer", "OfflineWebsiteViewer\OfflineWebsiteViewer.csproj", "{8DC240E0-15A7-417F-AA46-161F58387C26}"
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Installer", "Installer\Installer.wixproj", "{2FCFEAC8-B60E-4259-9F14-85FEA92C1AFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,12 @@ Global
 		{8DC240E0-15A7-417F-AA46-161F58387C26}.Release|x64.Build.0 = Release|x64
 		{8DC240E0-15A7-417F-AA46-161F58387C26}.Release|x86.ActiveCfg = Release|x86
 		{8DC240E0-15A7-417F-AA46-161F58387C26}.Release|x86.Build.0 = Release|x86
+		{2FCFEAC8-B60E-4259-9F14-85FEA92C1AFD}.Debug|x64.ActiveCfg = Debug|x86
+		{2FCFEAC8-B60E-4259-9F14-85FEA92C1AFD}.Debug|x86.ActiveCfg = Debug|x86
+		{2FCFEAC8-B60E-4259-9F14-85FEA92C1AFD}.Debug|x86.Build.0 = Debug|x86
+		{2FCFEAC8-B60E-4259-9F14-85FEA92C1AFD}.Release|x64.ActiveCfg = Release|x86
+		{2FCFEAC8-B60E-4259-9F14-85FEA92C1AFD}.Release|x86.ActiveCfg = Release|x86
+		{2FCFEAC8-B60E-4259-9F14-85FEA92C1AFD}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
