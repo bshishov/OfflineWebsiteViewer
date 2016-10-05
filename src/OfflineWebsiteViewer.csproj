@@ -33,7 +33,7 @@
     <ProductName>Offline Website Viewer</ProductName>
     <PublisherName>Boris Shishov</PublisherName>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>16</ApplicationRevision>
+    <ApplicationRevision>17</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -110,7 +110,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
@@ -118,6 +118,7 @@
   <PropertyGroup>
     <StartupObject>OfflineWebsiteViewer.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="DotLiquid, Version=2.0.55.0, Culture=neutral, PublicKeyToken=82e46016ecf9f07c, processorArchitecture=MSIL">
       <HintPath>packages\DotLiquid.2.0.55\lib\net451\DotLiquid.dll</HintPath>
@@ -342,8 +343,9 @@
   </Target>
   -->
   <!-- Added CEF files to deployment process (required for clickonce) -->
+  <!--
   <ItemGroup>
-    <Content Include="$(SolutionDir)packages\cef.redist.x64.3.2704.1432\CEF\**\*" Exclude="$(SolutionDir)packages\cef.redist.x64.3.2704.1432\CEF\x64\**\*;$(SolutionDir)packages\cef.redist.x64.3.2704.1432\CEF\locales\**\*.pak">
+    <Content Include="$(SolutionDir)packages\cef.redist.$(Platform).3.2704.1432\CEF\**\*" Exclude="$(SolutionDir)packages\cef.redist.$(Platform).3.2704.1432\CEF\$(Platform)\**\*;$(SolutionDir)packages\cef.redist.$(Platform).3.2704.1432\CEF\locales\**\*.pak">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
     </Content>
@@ -351,22 +353,22 @@
     <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(SolutionDir)packages\cef.redist.x64.3.2704.1432\CEF\**\en-US.*;$(SolutionDir)packages\cef.redist.x64.3.2704.1432\CEF\**\ru.*">
+    <Content Include="$(SolutionDir)packages\cef.redist.$(Platform).3.2704.1432\CEF\**\en-US.*;$(SolutionDir)packages\cef.redist.$(Platform).3.2704.1432\CEF\**\ru.*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(SolutionDir)packages\cef.redist.x64.3.2704.1432\CEF\x64\**\*">
+    <Content Include="$(SolutionDir)packages\cef.redist.$(Platform).3.2704.1432\CEF\$(Platform)\**\*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(SolutionDir)packages\CefSharp.Common.51.0.0\CefSharp\x64\**\CefSharp.BrowserSubprocess.*">
+    <Content Include="$(SolutionDir)packages\CefSharp.Common.51.0.0\CefSharp\$(Platform)\**\CefSharp.BrowserSubprocess.*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup />-->
 </Project>
