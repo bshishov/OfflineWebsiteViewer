@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ru-ru" Language="1049" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="Caption">Установка [WixBundleName]</String>
+  <String Id="Title">[WixBundleName]</String>
+  <String Id="InstallHeader">Добро пожаловать</String>
+  <String Id="InstallMessage">Это программа установит [WixBundleName] на ваш компьютер. Нажмите установить для продолжения, настройки для задания директории установки или Закрыть для завершения.</String>
+  <String Id="InstallVersion">Версия [WixBundleVersion]</String>
+  <String Id="ConfirmCancelMessage">Вы уверены что хотите отменить установку?</String>
+  <String Id="HelpHeader">Помощь в программе установки</String>
+  <String Id="HelpText">/install | /repair | /uninstall | /layout [directory] - устанавливает, модифицирует, удаляет или создает локальную копию в директории. Действие по умолчанию установка.  /passive | /quiet -  тихий режим установки с минимумом вопросов. По умолчанию выводятся все предупреждения.  /norestart   - предотвращает перезагрузку. По умолчанию программа задает вопрос при необходимости перезагрузки.  /log log.txt - логгирование в указанный файл. По умолчанию лог файл создается в директории %TEMP%.</String>
+  <String Id="HelpCloseButton">Закрыть</String>
+  <String Id="InstallAcceptCheckbox">Принять лицензионное соглашение</String>
+  <String Id="InstallOptionsButton">Настройки</String>
+  <String Id="InstallInstallButton">Начать</String>
+  <String Id="InstallCloseButton">Закрыть</String>
+  <String Id="OptionsHeader">Настройки программы установки</String>
+  <String Id="OptionsLocationLabel">Папка для установки:</String>
+  <String Id="OptionsBrowseButton">Обзор...</String>
+  <String Id="OptionsLocationLabel2">Адрес базы данных:</String>
+  <String Id="OptionsBrowseButton2">Обзор...</String>
+  <String Id="OptionsOkButton">OK</String>
+  <String Id="OptionsCancelButton">Отменить</String>
+  <String Id="ProgressHeader">Прогресс установки</String>
+  <String Id="ProgressLabel">Обработка:</String>
+  <String Id="OverallProgressPackageText">Инициализация...</String>
+  <String Id="ProgressCancelButton">Отмена</String>
+  <String Id="ModifyHeader">Изменить установку</String>
+  <String Id="ModifyRepairButton">Исправить</String>
+  <String Id="ModifyUninstallButton">Удалить</String>
+  <String Id="ModifyCloseButton">Закрыть</String>
+  <String Id="SuccessHeader">Установка завершена</String>
+  <String Id="SuccessLaunchButton">Запустить</String>
+  <String Id="SuccessRestartText">Вы должны перезапустить компьютер для использования этой программы.</String>
+  <String Id="SuccessRestartButton">Перезапустить</String>
+  <String Id="SuccessCloseButton">Закрыть</String>
+  <String Id="FailureHeader">Ошибка при установке</String>
+  <String Id="FailureRestartText">You must restart your computer to complete the rollback of the software.</String>
+  <String Id="FailureRestartButton">Перезапустить</String>
+  <String Id="FailureCloseButton">Закрыть</String>
+</WixLocalization>

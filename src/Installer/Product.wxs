@@ -1,30 +1,237 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="Installer" Language="1033" Version="1.0.0.0" Manufacturer="Shishov" UpgradeCode="7dd9b048-3d3f-42a9-8c30-c04bb0f912ab">
-		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+  <?define ProductName="Offline Website Viewer" ?>
+  <?define ProductDescription="Offline Website Viewer" ?>
+  <?define ProductInstallFolder="OfflineWebsiteViewer" ?>
+  <?define MainExecutable="OfflineWebsiteViewer.exe" ?>
+  <?define ProductVersion="1.0.0.16" ?>
+  <?define ProductCode="0BBF4A79-3F50-4634-928A-4461A7B12517"?>
+  <?define UpgradeCode="A612A7AE-61AC-4C2B-9ABC-60310464BA27"?>
+  <?define Manufacturer="ООО «ИИМТ»"?>
+  <?define MyApplication.TargetPath="..\..\bin\x86\Release"?>
+  
+	<Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="1049" 
+           Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)" Codepage="1251">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x86"/>
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MajorUpgrade  AllowSameVersionUpgrades="yes" DowngradeErrorMessage="Более новая версия [ProductName] уже установлена." />
 		<MediaTemplate />
+    <Icon Id="APPICON" SourceFile="Icon.ico" />
 
-		<Feature Id="ProductFeature" Title="Installer" Level="1">
-			<ComponentGroupRef Id="ProductComponents" />
-		</Feature>
+		<Feature Id="ProductFeature" Title="$(var.ProductName)" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="DesktopShortcut" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="FileAssociation" />
+    </Feature>
+    
+    
+    
+    <!-- get user possibility to override default dir-->
+    <Property Id="WIXUI_INSTALLDIR" Value="ProgramFilesFolder"></Property>
+    <!-- <UIRef Id="WixUI_InstallDir"/> -->
 	</Product>
 
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
+       <!-- Desktop directory for desctop shortcut -->
+      <Directory Id="DesktopFolder" SourceName="Desktop"/>
+      <!--  Directory for application programs shortcut -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)"/>
+      </Directory>
 			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLFOLDER" Name="Installer" />
+				<Directory Id="INSTALLFOLDER" Name="$(var.ProductInstallFolder)">
+          <Directory Id="de" Name="de"/>
+          <Directory Id="en" Name="en"/>
+          <Directory Id="es" Name="es"/>
+          <Directory Id="fr" Name="fr"/>
+          <Directory Id="it" Name="it"/>
+          <Directory Id="ja" Name="ja"/>
+          <Directory Id="ko" Name="ko"/>
+          <Directory Id="locales" Name="locales"/>
+          <Directory Id="ru" Name="ru"/>
+          <Directory Id="zhHans" Name="zh-Hans"/>
+          <Directory Id="zhHant" Name="zh-Hant"/>
+        </Directory>
 			</Directory>
 		</Directory>
 	</Fragment>
+  
+  <!-- Application programs shortcut -->
+  <Fragment>
+    <Component Id="ApplicationShortcut" Directory="ApplicationProgramsFolder" Guid="E86FB103-737D-4502-85AB-438510C25964">
+      <Shortcut Id="Shortcut"
+           Name="$(var.ProductName)"
+           Description="$(var.ProductDescription)"
+           Target="[INSTALLFOLDER]$(var.MainExecutable)"
+           Icon="APPICON"
+           WorkingDirectory="INSTALLFOLDER"/>
+      <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+      <RegistryValue Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.ProductName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+   </Component>
+  </Fragment>
+  
+  <!-- Desktop Shortcut -->
+  <Fragment>
+    <Component Id="DesktopShortcut" Directory="INSTALLFOLDER" Guid="E77575C3-9EC3-4C4A-9A1A-99266B3792D3">
+      <RegistryValue Id="RegShortcutDesktop" Root="HKCU"
+              Key="SOFTWARE\ACME\settings" Name="DesktopSC" Value="1"
+              Type="integer" KeyPath="yes" />
+      <Shortcut Id="desktopSC" Target="[INSTALLFOLDER]$(var.MainExecutable)"
+              Directory="DesktopFolder" Name="$(var.ProductName)"
+              IconIndex="0"
+              Icon="APPICON"
+              WorkingDirectory="WIXUI_INSTALLDIR" Advertise="no"/>
+    </Component>
+  </Fragment>
+  
+  <!-- File association -->
+  <Fragment>   
+    <Component Id="FileAssociation" Directory="INSTALLFOLDER" Guid="92F945BA-7D57-498A-8755-BD163B88B815" KeyPath="yes">
+      <ProgId Id="MyProgID" Description="Offline web archive" Advertise="no" IconIndex="1">
+         <Extension Id="owr" ContentType="application/zip" Advertise="no">
+            <Verb Command="Open" Id="regMyProgID" TargetFile="OfflineWebsiteViewer.exe" Argument="%1" />
+         </Extension>
+      </ProgId>
+    </Component>
+  </Fragment>
 
 	<Fragment>
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
-			<!-- <Component Id="ProductComponent"> -->
-				<!-- TODO: Insert files, registry keys, and other resources here. -->
-			<!-- </Component> -->
+		<ComponentGroup Id="ProductComponents">
+      <Component Id="ProductComponent" Guid="0DE75B11-007F-4CAF-B118-427F22D81910" Directory="INSTALLFOLDER">	
+	      <File Id="cef.pak" Source="$(var.MyApplication.TargetPath)\cef.pak" />
+	      <File Id="CefSharp.BrowserSubprocess.Core.dll" Source="$(var.MyApplication.TargetPath)\CefSharp.BrowserSubprocess.Core.dll" />
+	      <File Id="CefSharp.BrowserSubprocess.exe" Source="$(var.MyApplication.TargetPath)\CefSharp.BrowserSubprocess.exe" />
+	      <File Id="CefSharp.Core.dll" Source="$(var.MyApplication.TargetPath)\CefSharp.Core.dll" />
+	      <File Id="CefSharp.Core.xml" Source="$(var.MyApplication.TargetPath)\CefSharp.Core.xml" />
+	      <File Id="CefSharp.dll" Source="$(var.MyApplication.TargetPath)\CefSharp.dll" />
+	      <File Id="CefSharp.Wpf.dll" Source="$(var.MyApplication.TargetPath)\CefSharp.Wpf.dll" />
+	      <File Id="CefSharp.Wpf.xml" Source="$(var.MyApplication.TargetPath)\CefSharp.Wpf.xml" />
+	      <File Id="CefSharp.xml" Source="$(var.MyApplication.TargetPath)\CefSharp.xml" />
+	      <File Id="cef_100_percent.pak" Source="$(var.MyApplication.TargetPath)\cef_100_percent.pak" />
+	      <File Id="cef_200_percent.pak" Source="$(var.MyApplication.TargetPath)\cef_200_percent.pak" />
+	      <File Id="cef_extensions.pak" Source="$(var.MyApplication.TargetPath)\cef_extensions.pak" />
+	      <File Id="d3dcompiler_43.dll" Source="$(var.MyApplication.TargetPath)\d3dcompiler_43.dll" />
+	      <File Id="d3dcompiler_47.dll" Source="$(var.MyApplication.TargetPath)\d3dcompiler_47.dll" />
+	      <File Id="devtools_resources.pak" Source="$(var.MyApplication.TargetPath)\devtools_resources.pak" />
+	      <File Id="DotLiquid.dll" Source="$(var.MyApplication.TargetPath)\DotLiquid.dll" />
+	      <File Id="FontAwesome.WPF.dll" Source="$(var.MyApplication.TargetPath)\FontAwesome.WPF.dll" />
+	      <File Id="FontAwesome.WPF.xml" Source="$(var.MyApplication.TargetPath)\FontAwesome.WPF.xml" />
+	      <File Id="ICSharpCode.SharpZipLib.dll" Source="$(var.MyApplication.TargetPath)\ICSharpCode.SharpZipLib.dll" />
+	      <File Id="icudtl.dat" Source="$(var.MyApplication.TargetPath)\icudtl.dat" />
+	      <File Id="libcef.dll" Source="$(var.MyApplication.TargetPath)\libcef.dll" />
+	      <File Id="libEGL.dll" Source="$(var.MyApplication.TargetPath)\libEGL.dll" />
+	      <File Id="libGLESv2.dll" Source="$(var.MyApplication.TargetPath)\libGLESv2.dll" />
+	      <File Id="Lucene.Net.dll" Source="$(var.MyApplication.TargetPath)\Lucene.Net.dll" />
+	      <File Id="Lucene.Net.pdb" Source="$(var.MyApplication.TargetPath)\Lucene.Net.pdb" />
+	      <File Id="Lucene.Net.xml" Source="$(var.MyApplication.TargetPath)\Lucene.Net.xml" />
+	      <File Id="natives_blob.bin" Source="$(var.MyApplication.TargetPath)\natives_blob.bin" />
+	      <File Id="Newtonsoft.Json.dll" Source="$(var.MyApplication.TargetPath)\Newtonsoft.Json.dll" />
+	      <File Id="Newtonsoft.Json.xml" Source="$(var.MyApplication.TargetPath)\Newtonsoft.Json.xml" />
+	      <File Id="NLog.config" Source="$(var.MyApplication.TargetPath)\NLog.config" />
+	      <File Id="NLog.dll" Source="$(var.MyApplication.TargetPath)\NLog.dll" />
+	      <File Id="NLog.xml" Source="$(var.MyApplication.TargetPath)\NLog.xml" />
+	      <File Id="OfflineWebsiteViewer.application" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.application" />
+	      <File Id="OfflineWebsiteViewer.exe" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.exe" />
+	      <File Id="OfflineWebsiteViewer.exe.config" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.exe.config" />
+	      <File Id="OfflineWebsiteViewer.exe.manifest" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.exe.manifest" />
+	      <File Id="OfflineWebsiteViewer.pdb" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.pdb" />
+	      <File Id="OfflineWebsiteViewer.vshost.exe" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.vshost.exe" />
+	      <File Id="OfflineWebsiteViewer.vshost.exe.config" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.vshost.exe.config" />
+	      <File Id="Ookii.Dialogs.Wpf.dll" Source="$(var.MyApplication.TargetPath)\Ookii.Dialogs.Wpf.dll" />
+	      <File Id="Ookii.Dialogs.Wpf.xml" Source="$(var.MyApplication.TargetPath)\Ookii.Dialogs.Wpf.xml" />
+	      <File Id="snapshot_blob.bin" Source="$(var.MyApplication.TargetPath)\snapshot_blob.bin" />
+	      <File Id="System.Windows.Interactivity.dll" Source="$(var.MyApplication.TargetPath)\System.Windows.Interactivity.dll" />
+	      <File Id="widevinecdmadapter.dll" Source="$(var.MyApplication.TargetPath)\widevinecdmadapter.dll" />
+      </Component>
+      <Component Id="de" Guid="f120bb0f-8afa-11e6-bf6f-f8bc1298c897" Directory="de">
+	      <File Id="de.System.Windows.Interactivity.resources.dll" Source="$(var.MyApplication.TargetPath)\de\System.Windows.Interactivity.resources.dll" />
+      </Component>
+      <Component Id="en" Guid="f120bb10-8afa-11e6-8b42-f8bc1298c897" Directory="en">
+	      <File Id="en.System.Windows.Interactivity.resources.dll" Source="$(var.MyApplication.TargetPath)\en\System.Windows.Interactivity.resources.dll" />
+      </Component>
+      <Component Id="es" Guid="f120bb11-8afa-11e6-a483-f8bc1298c897" Directory="es">
+	      <File Id="es.System.Windows.Interactivity.resources.dll" Source="$(var.MyApplication.TargetPath)\es\System.Windows.Interactivity.resources.dll" />
+      </Component>
+      <Component Id="fr" Guid="f120bb12-8afa-11e6-b7ca-f8bc1298c897" Directory="fr">
+	      <File Id="fr.System.Windows.Interactivity.resources.dll" Source="$(var.MyApplication.TargetPath)\fr\System.Windows.Interactivity.resources.dll" />
+      </Component>
+      <Component Id="it" Guid="f120e21e-8afa-11e6-8a49-f8bc1298c897" Directory="it">
+	      <File Id="it.DotLiquid.resources.dll" Source="$(var.MyApplication.TargetPath)\it\DotLiquid.resources.dll" />
+	      <File Id="it.System.Windows.Interactivity.resources.dll" Source="$(var.MyApplication.TargetPath)\it\System.Windows.Interactivity.resources.dll" />
+      </Component>
+      <Component Id="ja" Guid="f120e21f-8afa-11e6-b514-f8bc1298c897" Directory="ja">
+	      <File Id="ja.System.Windows.Interactivity.resources.dll" Source="$(var.MyApplication.TargetPath)\ja\System.Windows.Interactivity.resources.dll" />
+      </Component>
+      <Component Id="ko" Guid="f120e220-8afa-11e6-bde8-f8bc1298c897" Directory="ko">
+	      <File Id="ko.System.Windows.Interactivity.resources.dll" Source="$(var.MyApplication.TargetPath)\ko\System.Windows.Interactivity.resources.dll" />
+      </Component>
+      <Component Id="locales" Guid="f120e221-8afa-11e6-b26a-f8bc1298c897" Directory="locales">
+	      <File Id="locales.am.pak" Source="$(var.MyApplication.TargetPath)\locales\am.pak" />
+	      <File Id="locales.ar.pak" Source="$(var.MyApplication.TargetPath)\locales\ar.pak" />
+	      <File Id="locales.bg.pak" Source="$(var.MyApplication.TargetPath)\locales\bg.pak" />
+	      <File Id="locales.bn.pak" Source="$(var.MyApplication.TargetPath)\locales\bn.pak" />
+	      <File Id="locales.ca.pak" Source="$(var.MyApplication.TargetPath)\locales\ca.pak" />
+	      <File Id="locales.cs.pak" Source="$(var.MyApplication.TargetPath)\locales\cs.pak" />
+	      <File Id="locales.da.pak" Source="$(var.MyApplication.TargetPath)\locales\da.pak" />
+	      <File Id="locales.de.pak" Source="$(var.MyApplication.TargetPath)\locales\de.pak" />
+	      <File Id="locales.el.pak" Source="$(var.MyApplication.TargetPath)\locales\el.pak" />
+	      <File Id="locales.en.GB.pak" Source="$(var.MyApplication.TargetPath)\locales\en-GB.pak" />
+	      <File Id="locales.en.US.pak" Source="$(var.MyApplication.TargetPath)\locales\en-US.pak" />
+	      <File Id="locales.es.419.pak" Source="$(var.MyApplication.TargetPath)\locales\es-419.pak" />
+	      <File Id="locales.es.pak" Source="$(var.MyApplication.TargetPath)\locales\es.pak" />
+	      <File Id="locales.et.pak" Source="$(var.MyApplication.TargetPath)\locales\et.pak" />
+	      <File Id="locales.fa.pak" Source="$(var.MyApplication.TargetPath)\locales\fa.pak" />
+	      <File Id="locales.fi.pak" Source="$(var.MyApplication.TargetPath)\locales\fi.pak" />
+	      <File Id="locales.fil.pak" Source="$(var.MyApplication.TargetPath)\locales\fil.pak" />
+	      <File Id="locales.fr.pak" Source="$(var.MyApplication.TargetPath)\locales\fr.pak" />
+	      <File Id="locales.gu.pak" Source="$(var.MyApplication.TargetPath)\locales\gu.pak" />
+	      <File Id="locales.he.pak" Source="$(var.MyApplication.TargetPath)\locales\he.pak" />
+	      <File Id="locales.hi.pak" Source="$(var.MyApplication.TargetPath)\locales\hi.pak" />
+	      <File Id="locales.hr.pak" Source="$(var.MyApplication.TargetPath)\locales\hr.pak" />
+	      <File Id="locales.hu.pak" Source="$(var.MyApplication.TargetPath)\locales\hu.pak" />
+	      <File Id="locales.id.pak" Source="$(var.MyApplication.TargetPath)\locales\id.pak" />
+	      <File Id="locales.it.pak" Source="$(var.MyApplication.TargetPath)\locales\it.pak" />
+	      <File Id="locales.ja.pak" Source="$(var.MyApplication.TargetPath)\locales\ja.pak" />
+	      <File Id="locales.kn.pak" Source="$(var.MyApplication.TargetPath)\locales\kn.pak" />
+	      <File Id="locales.ko.pak" Source="$(var.MyApplication.TargetPath)\locales\ko.pak" />
+	      <File Id="locales.lt.pak" Source="$(var.MyApplication.TargetPath)\locales\lt.pak" />
+	      <File Id="locales.lv.pak" Source="$(var.MyApplication.TargetPath)\locales\lv.pak" />
+	      <File Id="locales.ml.pak" Source="$(var.MyApplication.TargetPath)\locales\ml.pak" />
+	      <File Id="locales.mr.pak" Source="$(var.MyApplication.TargetPath)\locales\mr.pak" />
+	      <File Id="locales.ms.pak" Source="$(var.MyApplication.TargetPath)\locales\ms.pak" />
+	      <File Id="locales.nb.pak" Source="$(var.MyApplication.TargetPath)\locales\nb.pak" />
+	      <File Id="locales.nl.pak" Source="$(var.MyApplication.TargetPath)\locales\nl.pak" />
+	      <File Id="locales.pl.pak" Source="$(var.MyApplication.TargetPath)\locales\pl.pak" />
+	      <File Id="locales.pt.BR.pak" Source="$(var.MyApplication.TargetPath)\locales\pt-BR.pak" />
+	      <File Id="locales.pt.PT.pak" Source="$(var.MyApplication.TargetPath)\locales\pt-PT.pak" />
+	      <File Id="locales.ro.pak" Source="$(var.MyApplication.TargetPath)\locales\ro.pak" />
+	      <File Id="locales.ru.pak" Source="$(var.MyApplication.TargetPath)\locales\ru.pak" />
+	      <File Id="locales.sk.pak" Source="$(var.MyApplication.TargetPath)\locales\sk.pak" />
+	      <File Id="locales.sl.pak" Source="$(var.MyApplication.TargetPath)\locales\sl.pak" />
+	      <File Id="locales.sr.pak" Source="$(var.MyApplication.TargetPath)\locales\sr.pak" />
+	      <File Id="locales.sv.pak" Source="$(var.MyApplication.TargetPath)\locales\sv.pak" />
+	      <File Id="locales.sw.pak" Source="$(var.MyApplication.TargetPath)\locales\sw.pak" />
+	      <File Id="locales.ta.pak" Source="$(var.MyApplication.TargetPath)\locales\ta.pak" />
+	      <File Id="locales.te.pak" Source="$(var.MyApplication.TargetPath)\locales\te.pak" />
+	      <File Id="locales.th.pak" Source="$(var.MyApplication.TargetPath)\locales\th.pak" />
+	      <File Id="locales.tr.pak" Source="$(var.MyApplication.TargetPath)\locales\tr.pak" />
+	      <File Id="locales.uk.pak" Source="$(var.MyApplication.TargetPath)\locales\uk.pak" />
+	      <File Id="locales.vi.pak" Source="$(var.MyApplication.TargetPath)\locales\vi.pak" />
+	      <File Id="locales.zh.CN.pak" Source="$(var.MyApplication.TargetPath)\locales\zh-CN.pak" />
+	      <File Id="locales.zh.TW.pak" Source="$(var.MyApplication.TargetPath)\locales\zh-TW.pak" />
+      </Component>
+      <Component Id="ru" Guid="f121574f-8afa-11e6-97e3-f8bc1298c897" Directory="ru">
+	      <File Id="ru.OfflineWebsiteViewer.resources.dll" Source="$(var.MyApplication.TargetPath)\ru\OfflineWebsiteViewer.resources.dll" />
+	      <File Id="ru.System.Windows.Interactivity.resources.dll" Source="$(var.MyApplication.TargetPath)\ru\System.Windows.Interactivity.resources.dll" />
+      </Component>
+      <Component Id="zhHans" Guid="f1217e61-8afa-11e6-b5bb-f8bc1298c897" Directory="zhHans">
+	      <File Id="zh.Hans.System.Windows.Interactivity.resources.dll" Source="$(var.MyApplication.TargetPath)\zh-Hans\System.Windows.Interactivity.resources.dll" />
+      </Component>
+      <Component Id="zhHant" Guid="f1217e62-8afa-11e6-a3d8-f8bc1298c897" Directory="zhHant">
+	      <File Id="zh.Hant.System.Windows.Interactivity.resources.dll" Source="$(var.MyApplication.TargetPath)\zh-Hant\System.Windows.Interactivity.resources.dll" />
+      </Component>
 		</ComponentGroup>
 	</Fragment>
 </Wix>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+  <?define ProductName="Offline Website Viewer" ?>
+  <?define ProductDescription="Offline Website Viewer" ?>
+  <?define ProductInstallFolder="OfflineWebsiteViewer" ?>
+  <?define MainExecutable="OfflineWebsiteViewer.exe" ?>
+  <?define ProductVersion="1.0.0.16" ?>
+  <?define ProductCode="0BBF4A79-3F50-4634-928A-4461A7B12517"?>
+  <?define UpgradeCode="A612A7AE-61AC-4C2B-9ABC-60310464BA27"?>
+  <?define Manufacturer="ООО «ИИМТ»"?>
+  <?define MyApplication.TargetPath="..\..\bin\x86\Release"?>
+  <Bundle Name="$(var.ProductName)" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)"
+          UpgradeCode="$(var.UpgradeCode)">
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
+      <bal:WixStandardBootstrapperApplication
+        LicenseUrl=""
+        xmlns:bal="http://schemas.microsoft.com/wix/BalExtension" />
+        <Payload Name="1049\thm.wxl" Compressed="yes" SourceFile="HyperlinkTheme.wxl" />
+    </BootstrapperApplicationRef>
+
+    <!-- Переменная для передачи пути инсталяции в пакет MSI -->
+    <Variable Name="InstallFolder" Type="string" Value="[ProgramFilesFolder]$(var.ProductInstallFolder)" />
+    <Chain>
+      <PackageGroupRef Id="NetFx452Redist"/>
+      <PackageGroupRef Id="vcredist"/>
+      <MsiPackage Id="Sources"  Compressed="yes"   Vital="yes"  SourceFile="..\..\bin\Installer\\Release\Installer.msi">
+       <MsiProperty Name="APPLICATIONFOLDER" Value="[InstallFolder]" />
+      </MsiPackage>
+    </Chain>
+	</Bundle>
+
+  <Fragment>
+    <util:FileSearch Id="GetVC2013Exists" Condition="VC2013Exists" Variable="vc2013Exists" Path="[SystemFolder]vcruntime120.dll" Result="exists"/>
+    <PackageGroup Id="vcredist">
+      <ExePackage Id="vcredist2005x86"
+                  Cache="yes" PerMachine="yes" Permanent="yes" Vital="yes" Compressed="yes"
+                  SourceFile="C:\Program Files (x86)\Microsoft Visual Studio 14.0\SDK\Bootstrapper\Packages\vcredist_x86\vcredist_x86.exe"
+                  InstallCommand="/Q /C:&quot;msiexec /i vcredist.msi /qn&quot;"
+                  SuppressSignatureVerification="yes"
+                  DetectCondition="VC2013Exists"
+                  Protocol="burn"
+                />
+    </PackageGroup>
+  </Fragment>
+
+</Wix>
