@@ -121,8 +121,8 @@ namespace OfflineWebsiteViewer
             SearchResultsSelectionChangedCommand = new GenericCommand<HtmlFileRecord>(NavigateTo);
             ClearRecent = new GenericCommand(() =>
             {
-                _persister.Clear();
-                OnPropertyChanged(nameof(Recent));
+                if(_persister.RecentProjects.Any())
+                    _persister?.Clear();
             });
             OpenArchiveCommand = new GenericCommand(() =>
             {
