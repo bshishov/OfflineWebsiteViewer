@@ -25,7 +25,7 @@ namespace OfflineWebsiteViewer.Project
 
         public ArchiveProject(string path)
         {
-            Name = new FileInfo(path).Name;
+            Name = Path.GetFileNameWithoutExtension(path);
             ProjectPath = path;
             _tempDirectory = Path.Combine(Path.GetTempPath(), "OfflineWebsiteViewer", Name);
         }

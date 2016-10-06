@@ -3,16 +3,15 @@
      xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
      xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <?define ProductName="Offline Website Viewer" ?>
-  <?define ProductDescription="Offline Website Viewer" ?>
+  
   <?define ProductInstallFolder="OfflineWebsiteViewer" ?>
   <?define MainExecutable="OfflineWebsiteViewer.exe" ?>
   <?define ProductVersion="1.0.0.16" ?>
   <?define ProductCode="0BBF4A79-3F50-4634-928A-4461A7B12517"?>
   <?define UpgradeCode="A612A7AE-61AC-4C2B-9ABC-60310464BA27"?>
-  <?define Manufacturer="ООО «ИИМТ»"?>
   <?define MyApplication.TargetPath="..\..\bin\x86\Release"?>
-  <Bundle Name="$(var.ProductName)" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)"
+  <?define AppCulture="ru-ru"?>
+  <Bundle Name="!(loc.BundleName)" Version="$(var.ProductVersion)" Manufacturer="!(loc.ManufacturerName)"
           UpgradeCode="$(var.UpgradeCode)">
     <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
       <bal:WixStandardBootstrapperApplication
@@ -21,13 +20,16 @@
         <Payload Name="1049\thm.wxl" Compressed="yes" SourceFile="HyperlinkTheme.wxl" />
     </BootstrapperApplicationRef>
 
+    <!-- Will create a button at the end that will launch mainexec -->
+    <Variable Name="LaunchTarget" Value="[ProgramFilesFolder]$(var.ProductInstallFolder)\$(var.MainExecutable)"/>
+    
     <!-- Переменная для передачи пути инсталяции в пакет MSI -->
     <Variable Name="InstallFolder" Type="string" Value="[ProgramFilesFolder]$(var.ProductInstallFolder)" />
     <Chain>
       <PackageGroupRef Id="NetFx452Redist"/>
       <PackageGroupRef Id="vcredist"/>
-      <MsiPackage Id="Sources"  Compressed="yes"   Vital="yes"  SourceFile="..\..\bin\Installer\\Release\Installer.msi">
-       <MsiProperty Name="APPLICATIONFOLDER" Value="[InstallFolder]" />
+      <MsiPackage Id="Sources"  Compressed="yes"   Vital="yes"  SourceFile="..\..\bin\Installer\Release\$(var.AppCulture)\Installer.msi">
+        <MsiProperty Name="APPLICATIONFOLDER" Value="[InstallFolder]" />
       </MsiPackage>
     </Chain>
 	</Bundle>

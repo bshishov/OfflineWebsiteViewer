@@ -27,5 +27,11 @@ namespace OfflineWebsiteViewer
             InitializeComponent();
             this.DataContext = new MainWindowViewModel(this.WebBrowser);
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            App.Current.Shutdown();
+        }
     }
 }

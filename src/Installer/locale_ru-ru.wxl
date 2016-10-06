@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ru-ru" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="ApplicationName">Программа для просмотра веб архивов</String>
+  <String Id="ManufacturerName">ООО «ИИМТ»</String> <!-- Wellp, Boris Shishov actually -->
+  <String Id="ApplicationDescription">Программа для просмотра веб архивов</String>
+  <String Id="ProgIDDescription">Веб архив</String>
+</WixLocalization>

@@ -156,6 +156,9 @@
   <data name="MenuToolsDevTools" xml:space="preserve">
     <value>Open Dev Tools</value>
   </data>
+  <data name="NoProjectOnRemovableDrivesFound" xml:space="preserve">
+    <value>No projects on removable drives found.</value>
+  </data>
   <data name="OpenArchive" xml:space="preserve">
     <value>Open archive</value>
   </data>

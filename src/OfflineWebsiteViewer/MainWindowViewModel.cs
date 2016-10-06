@@ -84,6 +84,7 @@ namespace OfflineWebsiteViewer
         public GenericCommand CreateIndexCommand { get; }
         public GenericCommand ClearIndexCommand { get; }
         public List<IProject> Recent { get; }
+        public IProject RemovableProject { get; private set; }
 
         private readonly ChromiumWebBrowser _browser;
         private readonly BrowserBinding _binding;
@@ -159,19 +160,25 @@ namespace OfflineWebsiteViewer
             Recent = _persister.RecentProjects.Select(GetProject).Where(p => p != null).ToList();
             Logger.Trace($"Loaded {Recent.Count} recent projects");
 
+            FindProjectOnRemovableDrive();
+
             TemplateRenderer.RegisterSafeTypeWithAllProperties(typeof(IProject));
             browser.LoadHtml(TemplateRenderer.RenderFromResource("welcome.html", new {
                 recent = Recent,
+                removable = RemovableProject
             }), "resource://local/welcome");
             browser.Address = "resource://local/welcome";
 
             _binding = new BrowserBinding();
+            _binding.Bind("open", new GenericCommand<string>(Open));
+            _binding.Bind("open_removable", new GenericCommand(() => Open(RemovableProject)));
             _binding.Bind("open_archive", OpenArchiveCommand);
             _binding.Bind("open_folder", OpenFolderCommand);
             _binding.Bind("open_recent", new GenericCommand<int>(OpenRecent));
             _binding.Bind("search", (query) => Project.SearchIndex.Search(query as string));
             browser.RegisterJsObject("app", _binding);
 
+            
             if (Project != null)
                 LoadProject();
         }
@@ -199,6 +206,7 @@ namespace OfflineWebsiteViewer
             if (project == null)
                 return;
 
+            Logger.Trace($"Opened project {project.Name}");
             Project = project;
             LoadProject();
         }
@@ -247,12 +255,14 @@ namespace OfflineWebsiteViewer
 
         public void NavigateTo(HtmlFileRecord record)
         {
+            Logger.Trace($"Navigating to record '{record.Path}'");
             if (Project != null)
                 _browser.Address = Project.GetUrl(record.Path);
         }
 
         public void NavigateTohome()
         {
+            Logger.Trace($"Going home");
             if(Project != null)
                 _browser.Address = Project.IndexUrl;
         }
@@ -265,19 +275,61 @@ namespace OfflineWebsiteViewer
 
         public static IProject GetProject(string projectPath)
         {
+            Logger.Trace($"Trying to resolve project by path '{projectPath}'");
             if (Directory.Exists(projectPath))
+            {
+                Logger.Trace($"Project located by path '{projectPath}' is a directory project");
                 return new FlatDirectoryProject(projectPath);
+            }
 
             if (File.Exists(projectPath))
             {
                 var extension = Path.GetExtension(projectPath);
                 if (extension != null && ArchiveProject.Extensions.Contains(extension))
                 {
+                    Logger.Trace($"Project located by path '{projectPath}' is an archive project");
                     return new ArchiveProject(projectPath);
+                }
+                else
+                {
+                    Logger.Trace($"Invalid extension");
                 }
             }
            
             return null;
+        }
+
+        private void FindProjectOnRemovableDrive()
+        {
+            var driveList = DriveInfo.GetDrives();
+            if(driveList.Any())
+                Logger.Trace($"Found {driveList.Length} drives");
+
+            foreach (var drive in driveList)
+            {
+                if (drive.DriveType == DriveType.Removable && drive.IsReady)
+                {
+                    Logger.Trace($"Checking {drive} for archives");
+                    var root = drive.RootDirectory;
+                    try
+                    {
+                        var archives = root.GetFiles("*.owr", SearchOption.TopDirectoryOnly);
+                        if (archives.Any())
+                        {
+                            Logger.Trace($"Found {archives.Length} archives");
+                            Logger.Trace($"Using {archives.First()} archive");
+                            var project = new ArchiveProject(archives.First().FullName);
+                            RemovableProject = project;
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex, "Error reading removable drive");
+                        throw;
+                    }
+                }
+            }
         }
     }
 }

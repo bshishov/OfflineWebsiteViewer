@@ -26,7 +26,11 @@ namespace OfflineWebsiteViewer
             get { return _project; }
             set
             {
-                _project?.Dispose();
+                if (_project != null)
+                {
+                    Logger.Trace($"Disposing project {_project.Name}");
+                    _project.Dispose();
+                }
                 _project = value;
             }
         }
@@ -62,6 +66,9 @@ namespace OfflineWebsiteViewer
             Logger.Trace($"App startup with {args.Length} args: {String.Join(",", args)}");
             Logger.Trace("Configuring CefSettings");
             var cefSettings = new CefSettings();
+#if !DEBUG
+            cefSettings.LogSeverity = LogSeverity.Disable;
+#endif
 
             cefSettings.CefCommandLineArgs.Add("disable-gpu", "1");
 

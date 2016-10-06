@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <?define ProductName="Offline Website Viewer" ?>
-  <?define ProductDescription="Offline Website Viewer" ?>
   <?define ProductInstallFolder="OfflineWebsiteViewer" ?>
   <?define MainExecutable="OfflineWebsiteViewer.exe" ?>
   <?define ProductVersion="1.0.0.16" ?>
   <?define ProductCode="0BBF4A79-3F50-4634-928A-4461A7B12517"?>
   <?define UpgradeCode="A612A7AE-61AC-4C2B-9ABC-60310464BA27"?>
-  <?define Manufacturer="ООО «ИИМТ»"?>
   <?define MyApplication.TargetPath="..\..\bin\x86\Release"?>
   
-	<Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="1049" 
-           Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)" Codepage="1251">
+	<Product Id="$(var.ProductCode)" Name="!(loc.ApplicationName)" Language="1049" 
+           Version="$(var.ProductVersion)" Manufacturer="!(loc.ManufacturerName)" UpgradeCode="$(var.UpgradeCode)">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x86"/>
 
-		<MajorUpgrade  AllowSameVersionUpgrades="yes" DowngradeErrorMessage="Более новая версия [ProductName] уже установлена." />
+		<MajorUpgrade  AllowSameVersionUpgrades="yes" DowngradeErrorMessage="Newer version of [ProductName] is already installed." />
 		<MediaTemplate />
     <Icon Id="APPICON" SourceFile="Icon.ico" />
 
-		<Feature Id="ProductFeature" Title="$(var.ProductName)" Level="1">
+		<Feature Id="ProductFeature" Title="!(loc.ApplicationName)" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentRef Id="DesktopShortcut" />
       <ComponentRef Id="ApplicationShortcut" />
       <ComponentRef Id="FileAssociation" />
     </Feature>
-    
-    
     
     <!-- get user possibility to override default dir-->
     <Property Id="WIXUI_INSTALLDIR" Value="ProgramFilesFolder"></Property>
@@ -38,7 +33,7 @@
       <Directory Id="DesktopFolder" SourceName="Desktop"/>
       <!--  Directory for application programs shortcut -->
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)"/>
+        <Directory Id="ApplicationProgramsFolder" Name="!(loc.ApplicationName)"/>
       </Directory>
 			<Directory Id="ProgramFilesFolder">
 				<Directory Id="INSTALLFOLDER" Name="$(var.ProductInstallFolder)">
@@ -62,13 +57,13 @@
   <Fragment>
     <Component Id="ApplicationShortcut" Directory="ApplicationProgramsFolder" Guid="E86FB103-737D-4502-85AB-438510C25964">
       <Shortcut Id="Shortcut"
-           Name="$(var.ProductName)"
-           Description="$(var.ProductDescription)"
+           Name="!(loc.ApplicationName)"
+           Description="!(loc.ApplicationDescription)"
            Target="[INSTALLFOLDER]$(var.MainExecutable)"
            Icon="APPICON"
            WorkingDirectory="INSTALLFOLDER"/>
       <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
-      <RegistryValue Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.ProductName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      <RegistryValue Root="HKCU" Key="Software\!(loc.ApplicationDescription)\!(loc.ApplicationName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
    </Component>
   </Fragment>
   
@@ -79,7 +74,7 @@
               Key="SOFTWARE\ACME\settings" Name="DesktopSC" Value="1"
               Type="integer" KeyPath="yes" />
       <Shortcut Id="desktopSC" Target="[INSTALLFOLDER]$(var.MainExecutable)"
-              Directory="DesktopFolder" Name="$(var.ProductName)"
+              Directory="DesktopFolder" Name="!(loc.ApplicationName)"
               IconIndex="0"
               Icon="APPICON"
               WorkingDirectory="WIXUI_INSTALLDIR" Advertise="no"/>
@@ -89,7 +84,7 @@
   <!-- File association -->
   <Fragment>   
     <Component Id="FileAssociation" Directory="INSTALLFOLDER" Guid="92F945BA-7D57-498A-8755-BD163B88B815" KeyPath="yes">
-      <ProgId Id="MyProgID" Description="Offline web archive" Advertise="no" IconIndex="1">
+      <ProgId Id="MyProgID" Description="!(loc.ProgIDDescription)" Advertise="no" IconIndex="1">
          <Extension Id="owr" ContentType="application/zip" Advertise="no">
             <Verb Command="Open" Id="regMyProgID" TargetFile="OfflineWebsiteViewer.exe" Argument="%1" />
          </Extension>

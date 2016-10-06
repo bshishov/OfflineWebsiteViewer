@@ -156,6 +156,9 @@
   <data name="MenuToolsDevTools" xml:space="preserve">
     <value>Инструменты разработчика</value>
   </data>
+  <data name="NoProjectOnRemovableDrivesFound" xml:space="preserve">
+    <value>Не найдено проектов на внешних носителях</value>
+  </data>
   <data name="OpenArchive" xml:space="preserve">
     <value>Открыть архив</value>
   </data>

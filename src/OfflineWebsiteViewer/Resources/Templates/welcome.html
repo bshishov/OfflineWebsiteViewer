@@ -17,37 +17,46 @@
 <body>
 <div class="ui middle aligned center aligned grid">
     <div class="column">
+
+        <div class="ui segment grid">
+            <div class="four wide column">
+                <img src="resource://local/compact-disc.png"/>
+            </div>
+            <div class="twelve wide column left aligned">
+                {% if removable %}
+                <a class="ui huge fluid primary button" href="javascript:;" onclick="app.execute('open_removable');">{% lang OpenArchive %}<br/>«{{ removable.name }}»</a>
+                {% else %}
+                <h3>{% lang NoProjectOnRemovableDrivesFound %}</h3>
+                {% endif %}
+            </div>
+        </div>
+        {% if recent != empty %}
         <div class="ui raised padded segment grid">
-            {% if recent != empty %}
-            <div class="row">
-                <div class="column left aligned">
-                    <h3>{% lang RecentOpened %}</h3>
-                    <div class="ui list">
-                        {% for project in recent %}
-                        <a class="ui item" href="#" onclick="app.execute('open_recent', {{ forloop.index0 }});">
-                            {% if project.is_archive %}
-                            <i class="ui big file archive outline icon"></i>
-                            {% else %}
-                            <i class="ui big folder outline icon"></i>
-                            {% endif %}
-                            <div class="content left aligned">
-                                <div class="header left aligned">{{ project.name }}</div>
-                                <div class="description">{{ project.project_path }}</div>
-                            </div>
-                        </a>
-                        {% endfor %}
-                    </div>
+            <div class="column left aligned">
+                <h3>{% lang RecentOpened %}</h3>
+                <div class="ui list">
+                    {% for project in recent %}
+                    <a class="ui item" href="javascript:;" onclick="app.execute('open_recent', {{ forloop.index0 }});">
+                        {% if project.is_archive %}
+                        <i class="ui big file archive outline icon"></i>
+                        {% else %}
+                        <i class="ui big folder outline icon"></i>
+                        {% endif %}
+                        <div class="content left aligned">
+                            <div class="header left aligned">{{ project.name }}</div>
+                            <div class="description">{{ project.project_path }}</div>
+                        </div>
+                    </a>
+                    {% endfor %}
                 </div>
             </div>
-            {% endif %}
-            <div class="row">
-                <div class="column">
-                    <div class="ui large buttons center aligned">
-                        <button class="ui button" onclick="app.execute('open_archive');">{% lang OpenArchive %}</button>
-                        <div class="or"></div>
-                        <button class="ui button" onclick="app.execute('open_folder');">{% lang OpenFolder %}</button>
-                    </div>
-                </div>
+        </div>
+        {% endif %}
+        <div class="ui segment">
+            <div class="ui large buttons center aligned">
+                <a href="javascript:;" class="ui button" onclick="app.execute('open_archive');">{% lang OpenArchive %}</a>
+                <div class="or"></div>
+                <a href="javascript:;" class="ui button" onclick="app.execute('open_folder');">{% lang OpenFolder %}</a>
             </div>
         </div>
     </div>

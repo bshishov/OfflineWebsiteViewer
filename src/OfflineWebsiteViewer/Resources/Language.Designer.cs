@@ -178,6 +178,15 @@ namespace OfflineWebsiteViewer.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No projects on removable drives found..
+        /// </summary>
+        public static string NoProjectOnRemovableDrivesFound {
+            get {
+                return ResourceManager.GetString("NoProjectOnRemovableDrivesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open archive.
         /// </summary>
         public static string OpenArchive {
