@@ -324,7 +324,7 @@ namespace OfflineWebsiteViewer
 
             foreach (var drive in driveList)
             {
-                if (drive.DriveType == DriveType.Removable && drive.IsReady)
+                if ((drive.DriveType == DriveType.Removable || drive.DriveType == DriveType.CDRom) && drive.IsReady)
                 {
                     Logger.Trace($"Checking {drive} for archives");
                     var root = drive.RootDirectory;
