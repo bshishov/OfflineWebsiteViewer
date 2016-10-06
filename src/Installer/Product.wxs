@@ -5,6 +5,7 @@
   <?define ProductVersion="1.0.0.16" ?>
   <?define ProductCode="0BBF4A79-3F50-4634-928A-4461A7B12517"?>
   <?define UpgradeCode="A612A7AE-61AC-4C2B-9ABC-60310464BA27"?>
+  <?define RegistryApplicationName="OfflineWebsiteViewer"?>
   <?define MyApplication.TargetPath="..\..\bin\x86\Release"?>
   
 	<Product Id="$(var.ProductCode)" Name="!(loc.ApplicationName)" Language="1049" 
@@ -63,7 +64,7 @@
            Icon="APPICON"
            WorkingDirectory="INSTALLFOLDER"/>
       <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
-      <RegistryValue Root="HKCU" Key="Software\!(loc.ApplicationDescription)\!(loc.ApplicationName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      <RegistryValue Root="HKCU" Key="Software\$(var.RegistryApplicationName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
    </Component>
   </Fragment>
   
@@ -77,7 +78,7 @@
               Directory="DesktopFolder" Name="!(loc.ApplicationName)"
               IconIndex="0"
               Icon="APPICON"
-              WorkingDirectory="WIXUI_INSTALLDIR" Advertise="no"/>
+              WorkingDirectory="INSTALLFOLDER" Advertise="no"/>
     </Component>
   </Fragment>
   
@@ -131,9 +132,6 @@
 	      <File Id="OfflineWebsiteViewer.exe" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.exe" />
 	      <File Id="OfflineWebsiteViewer.exe.config" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.exe.config" />
 	      <File Id="OfflineWebsiteViewer.exe.manifest" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.exe.manifest" />
-	      <!--<File Id="OfflineWebsiteViewer.pdb" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.pdb" />
-	      <File Id="OfflineWebsiteViewer.vshost.exe" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.vshost.exe" />
-	      <File Id="OfflineWebsiteViewer.vshost.exe.config" Source="$(var.MyApplication.TargetPath)\OfflineWebsiteViewer.vshost.exe.config" />-->
 	      <File Id="Ookii.Dialogs.Wpf.dll" Source="$(var.MyApplication.TargetPath)\Ookii.Dialogs.Wpf.dll" />
 	      <File Id="Ookii.Dialogs.Wpf.xml" Source="$(var.MyApplication.TargetPath)\Ookii.Dialogs.Wpf.xml" />
 	      <File Id="snapshot_blob.bin" Source="$(var.MyApplication.TargetPath)\snapshot_blob.bin" />

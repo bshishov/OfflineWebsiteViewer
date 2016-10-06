@@ -66,15 +66,16 @@ namespace OfflineWebsiteViewer
             Logger.Trace($"App startup with {args.Length} args: {String.Join(",", args)}");
             Logger.Trace("Configuring CefSettings");
             var cefSettings = new CefSettings();
-#if !DEBUG
-            cefSettings.LogSeverity = LogSeverity.Disable;
-#endif
-
+#if DEBUG
             cefSettings.CefCommandLineArgs.Add("disable-gpu", "1");
+#else
+            cefSettings.LogSeverity = LogSeverity.Disable;
+            cefSettings.CefCommandLineArgs.Add("disable-gpu", "1");
+            cefSettings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
+            cefSettings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
 
             //cefSettings.SetOffScreenRenderingBestPerformanceArgs();
-            //cefSettings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
-            //cefSettings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
+#endif
 
             Logger.Trace($"Registing scheme {ZipSchemeHandlerFactory.SchemeName}");
             cefSettings.RegisterScheme(new CefCustomScheme()

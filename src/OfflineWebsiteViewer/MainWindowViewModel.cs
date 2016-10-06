@@ -62,6 +62,15 @@ namespace OfflineWebsiteViewer
             }
         }
 
+        public static bool IsDebug
+        {
+#if DEBUG
+            get { return true; }
+#else
+            get { return false; }
+#endif
+        }
+
         private ObservableCollection<HtmlFileRecord> _searchResults;
         public ObservableCollection<HtmlFileRecord> SearchResults
         {
@@ -97,7 +106,15 @@ namespace OfflineWebsiteViewer
             _browser.DownloadHandler = new CustomDownloadHandler();
             _browser.LifeSpanHandler = new CustomLifespanHandler();
 
-            OpenDevToolsCommand = new GenericCommand(() => { _browser.ShowDevTools(); });
+            OpenDevToolsCommand = new GenericCommand(() =>
+            {
+#if DEBUG
+                _browser.ShowDevTools();
+#else
+                return;
+#endif
+            });
+
             OpenLog = new GenericCommand(() => { LoggingView.Instance.Show(); });
 
             GoHomeCommand = new GenericCommand(NavigateTohome, () => Project != null);

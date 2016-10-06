@@ -43,9 +43,9 @@
                 <MenuItem Header="{x:Static resources:Language.MenuClearIndex}" Command="{Binding ClearIndexCommand}"/>
             </MenuItem>
             <MenuItem Header="{x:Static resources:Language.MenuTools}">
-                <MenuItem Header="{x:Static resources:Language.MenuToolsDevTools}" Command="{Binding OpenDevToolsCommand}" InputGestureText="F12"/>
+                <MenuItem Header="{x:Static resources:Language.MenuToolsDevTools}" Command="{Binding OpenDevToolsCommand}" InputGestureText="F12" Visibility="{Binding IsDebug, Converter={StaticResource boolToVisibility}}"/>
                 <MenuItem Header="{x:Static resources:Language.MenuToolsClearRecent}" Command="{Binding ClearRecent}" />
-                <MenuItem Header="{x:Static resources:Language.MenuOpenLog}" Command="{Binding OpenLog}" />
+                <MenuItem Header="{x:Static resources:Language.MenuOpenLog}" Command="{Binding OpenLog}" Visibility="{Binding IsDebug, Converter={StaticResource boolToVisibility}}"/>
             </MenuItem>
         </Menu>
         <Grid>
