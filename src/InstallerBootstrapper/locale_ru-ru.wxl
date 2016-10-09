@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WixLocalization Culture="ru-ru" xmlns="http://schemas.microsoft.com/wix/2006/localization">
   <String Id="BundleName">Программа для просмотра веб архивов</String>
-  <String Id="ManufacturerName">ООО «ИИМТ»</String> <!-- Wellp, Boris Shishov actually -->
+  <String Id="ManufacturerName">Boris Shishov</String>
 </WixLocalization>
