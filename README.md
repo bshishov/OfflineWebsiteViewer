@@ -7,6 +7,8 @@ This tool was created as a replacement for ZIM archives for grabbing wikimedia-b
 
 ![Screenshot 2](https://raw.githubusercontent.com/bshishov/OfflineWebsiteViewer/master/doc/screenshots/screen2.png)
 
+This tool can also automatically detect `.owr` archive on a removable drive or CD so you can just burn an archive to a disk and then user can just press that big blue button to open it. Easy to use for dumb end users :)
+
 > Sorry for screenshots in russian, it uses default system locale.
 
 ## Download
@@ -28,6 +30,7 @@ You can create your own localizations by creating your own `Resources.Language.<
 Requirements for user:
 > All requirements for end user are included into installer.
 
+- Windows Vista or higher (because of .NET 4.5.2)
 - [.NET 4.5.2](https://www.microsoft.com/download/details.aspx?id=42642)
 - [VC 2013 Redistributable](https://www.microsoft.com/download/details.aspx?id=40784) (for CEF libraries)
 
@@ -68,6 +71,12 @@ There are 3 projects in the solution:
 ## Search indexing
 
 Search indexing is based on [Lucene.Net](https://lucenenet.apache.org/) package. You can create (or delete) a search index using the command in the main menu. Tool looks for all `.html` and `.htm` files in project folder then extracts a `<title>`  tag contents. Then it creates a special search index stored in same project folder in folder called `SearchIndex`. So you can pack the whole project into archive without losing search index. Just create index once and then it is ready to use.
+
+## ToDo
+
+- Build with appveyor
+- More locales
+- Unified `project://` scheme
 
 ## Contribution
 Feel free to contribute.
